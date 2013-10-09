@@ -218,6 +218,14 @@ class XLF.Row extends BaseModel
       typeDetail.set("rowType", rtp, silent: true)  if (rtp = XLF.lookupRowType(tpid))
     processType(typeDetail, tpVal, {})
     typeDetail.on "change:value", processType
+    typeDetail.on "change:listName", (rd, listName, ctx)->
+      rtp = typeDetail.get("rowType")
+      typeStr = "#{typeDetail.get("typeId")}"
+      if rtp.specifyChoice and listName
+        typeStr += " #{listName}"
+      if rtp.orOtherOption and typeDetail.get("orOther")
+        typeStr += " or_other"
+      typeDetail.set({value: typeStr}, silent: true)
 
   getValue: (what)->
     @get(what).get("value")
