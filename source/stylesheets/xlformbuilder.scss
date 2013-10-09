@@ -1,0 +1,211 @@
+@charset "utf-8";
+
+.formbuilder-wrap {
+  h1 {
+    color: rgba(0, 0, 0, .3);
+    font-weight: bold;
+    font-size: 32px;
+    letter-spacing: -1px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+    margin: 0;
+  }
+}
+.form-editor-wrap {
+  color: rgb(50, 53, 70);
+  label {
+    color: rgb(50, 53, 70)
+  }
+
+  ul.-form-editor {
+    background-color: #eee;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    list-style-type: none;
+    li {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      border-bottom: 1px solid #ddd;
+
+      .detail-view {
+        margin: 6px 20px 0;
+        &:last-child {
+          margin-bottom: 6px;
+        }
+      }
+      &:first-child {
+        padding-top: 6px;
+      }
+      &:last-child {
+        border-bottom: 0 none;
+      }
+    }
+    a.delete-row {
+      text-decoration: none;
+      position: absolute;
+      top: 12px;
+      right: 6px;
+      font-size: 20px;
+      line-height: 18px;
+      color: #999;
+      cursor: pointer;
+      display: block;
+      padding: 3px 8px 6px;
+      &:hover {
+        color: #444;
+      }
+    }
+  }
+}
+
+.row-details {
+  margin: 4px 0 -2px 0;
+  font-size: 11px;
+
+  .row-detail {
+    display: inline-block;
+    margin: 0 12px 0 0;
+    color: #666;
+    border: 1px solid #bbb;
+    border-color: #dee1e3;
+    height: 18px;
+    background-color: #f8f6f4;
+    line-height: 17px;
+    padding: 0.5px 4px;
+    border-radius: 3px;
+    strong.click-editable, strong.click-editable-shading {
+      border: 1px solid;
+      border-color: #ddd #ccc #bbb #ccc;
+      padding: 0 4px;
+      background-color: #eee;
+      border-radius: 2px;
+      cursor: pointer;
+      &.error {
+        color: rgb(204,123,123);
+        background-color: #ffbdbd;
+        border-color: rgb(255,186, 186) rgb(204,123,123) rgb(204,123,123) rgb(255,186,186);
+        &:after {
+          color: rgb(204,123,123);
+        }
+        &:hover {
+          color: #c53131;
+          border-color: rgb(255,186, 186) rgb(204,123,123) rgb(204,123,123) rgb(255,186,186);
+          background-color: #f88;
+          &:after {
+            color: #c53131;
+          }
+        }
+      }
+      &:hover {
+        border-color: #ddd #ccc #999 #ccc;
+        background-color: #ddd;
+      }
+      &:after {
+        content: " ||";
+        color: #bbb;
+        font-size: 10px;
+      }
+    }
+    &.pointer, &.pointer * {
+      cursor: pointer;
+    }
+    input {
+      display: inline-block;
+      position: relative;
+      top: 3px;
+    }
+    &.active {
+      color: #4D4D96;
+      border-top-color: #c0c0ff;
+      border-right-color: #c2c2ff;
+      border-bottom-color: #c2c2ff;
+      border-left-color: #bbf;
+      background-color: #E2E9F5;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid #bbb;
+      &:hover {
+        border-color: #888;
+        cursor: pointer;
+      }
+    }
+    select.type-select {
+      margin-left: 5px;
+    }
+  }
+}
+div.trailing-buttons {
+  text-align: right;
+  padding: 0 28px;
+  margin: -4px 0 4px;
+  button {
+    &.attached {
+      border-radius: 0 0 6px 6px;
+      padding-top: 12px;
+    }
+    padding: 5px 12px;
+    border-radius: 1px;
+    font-size: 14px;
+    color: #444;
+  }
+}
+
+.formbuilder-wrap {
+  width: 796px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  margin: 10px auto;
+  padding: 12px 14px;
+  background-color: #d4d4d4;
+
+  #survey-stats {
+    border-top: 1px solid #bbb;
+    padding-top: 1px;
+    color: #666;
+  }
+  h1 {
+    font-size: 36px;
+  }
+
+  /* Using ".post-row-buttons"
+     so that we can have an easy way to add questions
+     into the middle of the list */
+  li {
+    .post-row-buttons {
+      height: 18px;
+      width: 100%;
+      position: absolute;
+      bottom: -9px;
+      text-align: right;
+      z-index: 999;
+      color: #bbb;
+
+      button {
+        line-height: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        opacity: 0.4;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+  li:last-child .post-row-buttons {
+    display: none;
+  }
+  .stats {
+    background-color: #f0f0f0;
+    border: 1px solid #666;
+    border-color: #aaa #999 #999 #aaa;
+    border-radius: 4px;
+    font-size: 11px;
+    margin: 0 0 6px;
+    padding: 3px 6px;
+  }
+}

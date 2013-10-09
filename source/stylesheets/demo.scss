@@ -1,0 +1,29 @@
+#samples, #builder, #preview {
+  clear: both;
+  width: 800px;
+  margin: 6px auto;
+}
+button.floating-right {
+  float: right;
+}
+
+#preview {
+  h2 {
+    font-size: 15px;
+    margin: 9px 0 0;
+    font-weight: normal;
+    code {
+      font-size: 15px;
+    }
+  }
+  table {
+    td {
+      min-width: 100px;
+    }
+    td, th {
+      text-align: left;
+      border: 1px solid #ddd;
+      padding: 2px 15px;
+    }
+  }
+}
