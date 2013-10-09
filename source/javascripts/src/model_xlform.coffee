@@ -380,8 +380,8 @@ class XLF.Settings extends BaseModel
   defaults:
     form_title: "New form"
   toCsvJson: ->
-    columns = []
-    rowObjects = []
+    columns = _.keys(@attributes)
+    rowObjects = [@toJSON()]
 
     columns: columns
     rowObjects: rowObjects
