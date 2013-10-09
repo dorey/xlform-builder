@@ -60,7 +60,7 @@ class XlfRowView extends Backbone.View
       v = new XlfDetailView(model: val, rowView: @).renderInRowView(@)
     @
   newListView: (rv)->
-    lv = new XLF.CreateListView(survey: @model._parent, row: @model, rowView: @)
+    lv = new XLF.EditListView(choiceList: new XLF.ChoiceList(), survey: @model._parent, rowView: @)
     $lvel = lv.render().$el.css @$(".select-list").position()
     @$el.append $lvel
 
@@ -69,6 +69,7 @@ class @SurveyApp extends Backbone.View
   events:
     "click .delete-row": "clickRemoveRow"
     "click .insert-row": "clickInsertRow"
+    "click .edit-list": "editList"
     "click #add-question": "addNewRow"
     "click #publish-survey": "publishButtonClick"
 
@@ -143,7 +144,13 @@ class @SurveyApp extends Backbone.View
     @survey.rows.trigger("reset")
   publishButtonClick: (evt)->
     @onPublish.call(@, arguments)
-
+  editList: (evt)->
+    $et = $(evt.target)
+    listName = $(evt.target).data("listName")
+    list = @survey.choices.get(listName)
+    lv = new XLF.EditListView(choiceList: list, survey: @survey)
+    $lvel = lv.render().$el.css $et.position()
+    $et.parents("div").eq(0).append $lvel
 
 ###
 This is the view for the survey-wide details that appear at the bottom
@@ -189,17 +196,12 @@ class XlfSurveyDetailView extends Backbone.View
   # * Media?
 ###
 
-class XLF.CreateListView extends Backbone.View
-  ###
-  This will eventually be merged with (or possibly subclass from)
-  a list-editor view, since most of the functionality carries over
-  from list creation to list editing.
-  ###
-  initialize: ({@survey, @row, @rowView})->
-    @model = new XLF.ChoiceList()
-    @collection = @model.options
-    @collection.add placeholder: "Option 1"
-    @collection.add placeholder: "Option 2"
+class XLF.EditListView extends Backbone.View
+  initialize: ({@survey, @rowView, @choiceList})->
+    @collection = @choiceList.options
+    if @collection.models.length is 0
+      @collection.add placeholder: "Option 1"
+      @collection.add placeholder: "Option 2"
     @collection.bind "change reset add remove", ()=> @render()
 
   className: "new-list-view"
@@ -210,18 +212,18 @@ class XLF.CreateListView extends Backbone.View
     "click .list-delete-row": "deleteRow"
   render: ->
     @$el.html """
-      <p class="new-list-text">New list: <span class="name"></span></p>
+      <p class="new-list-text">Name: <span class="name">#{@choiceList.get("name") || ""}</span></p>
       <div class="options"></div>
       <p><button class="list-add-row">[+] Add option</button></p>
       <p class="error" style="display:none"></p>
       <p><button class="list-ok">OK</button><button class="list-cancel">Cancel</button></p>
     """
     nameEl = @$(".name")
-    nameEl.text(name)  if (name = @model.get("name"))
+    nameEl.text(name)  if (name = @choiceList.get("name"))
     eipOpts =
       callback: (u, ent)=>
-        cleanName = sluggify ent
-        @model.set("name", cleanName)
+        cleanName = XLF.sluggify ent
+        @choiceList.set("name", cleanName)
         cleanName
     nameEl.editInPlace(eipOpts)
 
@@ -233,18 +235,18 @@ class XLF.CreateListView extends Backbone.View
           inp.val(label)
         inp.change (evt)->
           val = $(evt.target).val()
-          cleanedVal = sluggify val
+          cleanedVal = XLF.sluggify val
           option.set "label", val
           option.set "name", cleanedVal
           ``
         optionsEl.append $("<p>").html(inp)
     @
   saveList: ->
-    if @model.isValid()
-      @survey.choices.add @model
+    if @choiceList.isValid()
+      @survey.choices.add @choiceList
       @$el.remove()
       if @rowView
-        @rowView.model.get("type").set("listName", @model.get("name"))
+        @rowView.model.get("type").set("listName", @choiceList.get("name"))
       @survey.trigger "change"
     else
       @$(".error").text("Error saving: ").show()
@@ -260,6 +262,6 @@ class XLF.CreateListView extends Backbone.View
 Helper methods:
   sluggify
 ###
-sluggify = (str)->
+XLF.sluggify = (str)->
   # Convert text to a slug/xml friendly format.
   str.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '')
