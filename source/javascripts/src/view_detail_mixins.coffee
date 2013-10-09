@@ -1,6 +1,7 @@
 @DetailViewMixins = do ->
   VX = {}
-  VX.name = VX.label = VX.hint =
+
+  VX.label = VX.hint =
     html: ->
       """
       #{@model.key}: <code>#{@model.get("value")}</code>
@@ -10,12 +11,25 @@
         callback: (uu, ent)=>
           @model.set("value", ent)
           ent
+  VX.name =
+    html: ->
+      """
+      #{@model.key}: <code>#{@model.get("value")}</code>
+      """
+    afterRender: ->
+      @$el.find("code").editInPlace
+        callback: (uu, ent)=>
+          cleanName = XLF.sluggify ent
+          @model.set("value", cleanName)
+          cleanName
 
   VX.required =
     html: ->
       """<label><input type="checkbox"> Required?</label>"""
     afterRender: ->
-      @$el.find("input").prop("checked", @model.get("value"))
+      inp = @$el.find("input")
+      inp.prop("checked", @model.get("value"))
+      inp.change ()=> @model.set("value", inp.prop("checked"))
 
   type_select_options = XLF.lookupRowType.typeSelectList()
   VX.type =
@@ -28,7 +42,7 @@
       if rtp.specifyChoice
         listName = @model.get("listName")
         if listName
-          htmlStr += """ from <span class="select-list"><code>#{listName}</code></span>"""
+          htmlStr += """ from <span class="select-list"><code>#{listName}</code></span> <button class="edit-list" data-list-name="#{listName}">Edit</button>"""
         else
           htmlStr += """ from <span class="select-list missing">choose a list</span>"""
 
@@ -64,7 +78,7 @@
       changeListCb = (un, ent)=>
         if ent is xlfCreateListSignal
           @rowView.newListView(@)
-          "&mdash;"
+          ""
         else
           @model.set("listName", ent)
           ent
