@@ -31,22 +31,48 @@
           htmlStr += """ from <span class="select-list"><code>#{listName}</code></span>"""
         else
           htmlStr += """ from <span class="select-list missing">choose a list</span>"""
+
       @$el.html htmlStr
+
       typeSelectCb = (unused, entered)=>
         @model.set("value", entered)
+      $sel = $("<select>", class: "inplace_field")
+      $og = $("<optgroup>", label: "Field types")
+      for [label, name] in type_select_options
+        $og.append $("<option>", value: name, text: label)
+      $sel.append $og
+
       eipOpts =
         field_type: "select"
-        select_options: type_select_options
+        select_elem: $sel
         callback: typeSelectCb
+
       @$(".select-tp").editInPlace(eipOpts)
+
       survey = @model.parentRow._parent
-      listIds = survey.choices.map (c)-> c.name
+      $lsel = $("<select>", class: "inplace_field")
+      $og = $("<optgroup>", label: "Select a list")
+      listIds = survey.choices.map (c)->
+        $og.append $("<option>", text: c.name, value: c.name)
+        c.name
+      $lsel.append $og
+      $og = $("<optgroup>", label: " -OR- ")
+      xlfCreateListSignal = "xlf:createList"
+      $og.append $("<option>", text: "Create a new list", value: xlfCreateListSignal)
+      $lsel.append $og
+
       changeListCb = (un, ent)=>
-        @model.set("listName", ent)
-        ent
+        if ent is xlfCreateListSignal
+          log """
+            new XlfCreateListView(survey: @survey, row: @model.parentRow)
+            """
+          "&mdash;"
+        else
+          @model.set("listName", ent)
+          ent
       selectListOpts =
         field_type: "select"
-        select_options: listIds
+        select_elem: $lsel
         callback: changeListCb
 
       @$(".select-list").editInPlace(selectListOpts)
