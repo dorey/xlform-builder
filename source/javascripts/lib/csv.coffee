@@ -64,9 +64,14 @@ class Csv
     else if param
       @columns  = if _isArray param.columns then param.columns else []
       if param.rowObjects
-        @rowArray = do ->
+        if @columns.length is 0
+          # this may be slow, but it should get all the possible columns
           for row in param.rowObjects
-            row[c] for c in param.columns
+            for key, val of row when key not of columns
+              @columns.push key
+        @rowArray = do =>
+          for row in param.rowObjects
+            row[c] for c in @columns
       else
         @rowArray = if _isArray param.rows then param.rows else []
       @kind     = param.kind if param.kind?
