@@ -262,7 +262,10 @@ $.extend(InlineEditor.prototype, {
     
     var editor = null;
     if ("select" === this.settings.field_type)
-      editor = this.createSelectEditor();
+      if (this.settings.select_elem)
+        editor = $(this.settings.select_elem);
+      else
+        editor = this.createSelectEditor();
     else if ("text" === this.settings.field_type)
       editor = $('<input type="text" ' + this.inputNameAndClass() 
         + ' size="' + this.settings.text_size  + '" />');
