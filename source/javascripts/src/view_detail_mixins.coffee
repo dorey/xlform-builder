@@ -53,8 +53,8 @@
       $lsel = $("<select>", class: "inplace_field")
       $og = $("<optgroup>", label: "Select a list")
       listIds = survey.choices.map (c)->
-        $og.append $("<option>", text: c.name, value: c.name)
-        c.name
+        $og.append $("<option>", text: c.get("name"), value: c.get("name"))
+        c.get("name")
       $lsel.append $og
       $og = $("<optgroup>", label: " -OR- ")
       xlfCreateListSignal = "xlf:createList"
@@ -63,9 +63,7 @@
 
       changeListCb = (un, ent)=>
         if ent is xlfCreateListSignal
-          log """
-            new XlfCreateListView(survey: @survey, row: @model.parentRow)
-            """
+          @rowView.newListView(@)
           "&mdash;"
         else
           @model.set("listName", ent)

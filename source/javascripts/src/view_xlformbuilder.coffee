@@ -17,7 +17,7 @@ class XlfDetailView extends Backbone.View
   a mixin from "DetailViewMixins" is applied.
   ###
   className: "detail-view"
-  initialize: ()->
+  initialize: ({@rowView})->
     unless @model.key
       throw new XlformError "RowDetail does not have key"
     if (viewMixin = DetailViewMixins[@model.key])
@@ -57,8 +57,12 @@ class XlfRowView extends Backbone.View
     @$el.data("row-model-id", @model.cid)
 
     for [key, val] in @model.attributesArray()
-      v = new XlfDetailView(model: val).renderInRowView(@)
+      v = new XlfDetailView(model: val, rowView: @).renderInRowView(@)
     @
+  newListView: (rv)->
+    lv = new XLF.CreateListView(survey: @model._parent, row: @model, rowView: @)
+    $lvel = lv.render().$el.css @$(".select-list").position()
+    @$el.append $lvel
 
 class @SurveyApp extends Backbone.View
   className: "formbuilder-wrap"
@@ -73,9 +77,7 @@ class @SurveyApp extends Backbone.View
 
     @survey.rows.on "add", @reset, @
     @survey.rows.on "reset", @reset, @
-
-    if "change" of options
-      @survey.on "change", options.change
+    @survey.on "change", @reset, @
 
     @onPublish = options.publish || $.noop
 
@@ -186,3 +188,78 @@ class XlfSurveyDetailView extends Backbone.View
   # * Calculation
   # * Media?
 ###
+
+class XLF.CreateListView extends Backbone.View
+  ###
+  This will eventually be merged with (or possibly subclass from)
+  a list-editor view, since most of the functionality carries over
+  from list creation to list editing.
+  ###
+  initialize: ({@survey, @row, @rowView})->
+    @model = new XLF.ChoiceList()
+    @collection = @model.options
+    @collection.add placeholder: "Option 1"
+    @collection.add placeholder: "Option 2"
+    @collection.bind "change reset add remove", ()=> @render()
+
+  className: "new-list-view"
+  events:
+    "click .list-ok": "saveList"
+    "click .list-cancel": "cancelList"
+    "click .list-add-row": "addRow"
+    "click .list-delete-row": "deleteRow"
+  render: ->
+    @$el.html """
+      <p class="new-list-text">New list: <span class="name"></span></p>
+      <div class="options"></div>
+      <p><button class="list-add-row">[+] Add option</button></p>
+      <p class="error" style="display:none"></p>
+      <p><button class="list-ok">OK</button><button class="list-cancel">Cancel</button></p>
+    """
+    nameEl = @$(".name")
+    nameEl.text(name)  if (name = @model.get("name"))
+    eipOpts =
+      callback: (u, ent)=>
+        cleanName = sluggify ent
+        @model.set("name", cleanName)
+        cleanName
+    nameEl.editInPlace(eipOpts)
+
+    optionsEl = @$(".options")
+    for c in @collection.models
+      do (option=c)->
+        inp = $("<input>", placeholder: option.get("placeholder"))
+        if (label = option.get("label"))
+          inp.val(label)
+        inp.change (evt)->
+          val = $(evt.target).val()
+          cleanedVal = sluggify val
+          option.set "label", val
+          option.set "name", cleanedVal
+          ``
+        optionsEl.append $("<p>").html(inp)
+    @
+  saveList: ->
+    if @model.isValid()
+      @survey.choices.add @model
+      @$el.remove()
+      if @rowView
+        @rowView.model.get("type").set("listName", @model.get("name"))
+      @survey.trigger "change"
+    else
+      @$(".error").text("Error saving: ").show()
+  cancelList: ->
+    if confirm("Are you sure you want to cancel this list?")
+      @$el.remove()
+  addRow: ->
+    @collection.add placeholder: "New option"
+  deleteRow: ->
+    log "Not yet implemented"
+
+###
+Helper methods:
+  sluggify
+###
+sluggify = (str)->
+  # Convert text to a slug/xml friendly format.
+  str.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '')

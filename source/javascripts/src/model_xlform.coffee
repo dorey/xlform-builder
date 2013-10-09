@@ -69,7 +69,6 @@ class XLF.Survey extends SurveyFragment
         tmp[lName].push(choiceRow)
       for cn in choiceNames
         choices.add(name: cn, options: tmp[cn])
-        # log choices.last()
       choices
     if options.survey
       surveyRows = for r in options.survey
@@ -219,6 +218,14 @@ class XLF.Row extends BaseModel
       typeDetail.set("rowType", rtp, silent: true)  if (rtp = XLF.lookupRowType(tpid))
     processType(typeDetail, tpVal, {})
     typeDetail.on "change:value", processType
+    typeDetail.on "change:listName", (rd, listName, ctx)->
+      rtp = typeDetail.get("rowType")
+      typeStr = "#{typeDetail.get("typeId")}"
+      if rtp.specifyChoice and listName
+        typeStr += " #{listName}"
+      if rtp.orOtherOption and typeDetail.get("orOther")
+        typeStr += " or_other"
+      typeDetail.set({value: typeStr}, silent: true)
 
   getValue: (what)->
     @get(what).get("value")
@@ -233,7 +240,7 @@ class XLF.Row extends BaseModel
   setList: (list)->
     listToSet = @_parent.choices.get(list)
     throw new Error("List not found: #{list}")  unless listToSet
-    @get("type").set("listName", listToSet.name)
+    @get("type").set("listName", listToSet.get("name"))
 
   validate: ->
     for key, val of @attributes
@@ -300,11 +307,9 @@ class XLF.Options extends Backbone.Collection
 
 class XLF.ChoiceList extends BaseModel
   idAttribute: "name"
-  constructor: (opts, context)->
-    @name = opts.name
+  constructor: (opts={}, context)->
     options = opts.options || []
-    super name: @name, context
-    @set("name", @name, silent: true)
+    super name: opts.name, context
     @options = new XLF.Options(options || [])
     @options.parentList = @
   summaryObj: ->
@@ -317,7 +322,7 @@ class XLF.ChoiceLists extends Backbone.Collection
   summaryObj: ()->
     out = {}
     for model in @models
-      out[model.name] = model.summaryObj()
+      out[model.get("name")] = model.summaryObj()
     out
   toCsvJson: ->
     @summaryObj()
@@ -325,7 +330,7 @@ class XLF.ChoiceLists extends Backbone.Collection
     cols = ["list name", "name", "label"]
     for choiceList in @models
       for option in choiceList.options.models
-        rows.push _.extend {}, option.toJSON(), "list name": choiceList.name
+        rows.push _.extend {}, option.toJSON(), "list name": choiceList.get("name")
 
     columns: cols
     rowObjects: rows
