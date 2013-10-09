@@ -13,5 +13,6 @@ set :images_dir, 'images'
 configure :build do
   # Use relative URLs
   activate :relative_assets
+  activate :cache_buster
   set :build_dir, './'
 end
