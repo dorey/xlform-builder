@@ -82,7 +82,8 @@ class @SurveyApp extends Backbone.View
   render: ()->
     @$el.html """
       <div class="stats">
-        <h1>#{@survey.settings.get("form_title")}</h1>
+        <h1 class="form_title"></h1>
+        <h2 class="description"></h2>
         <div id="survey-stats"></div>
       </div>
       <div class="form-editor-wrap">
@@ -99,6 +100,17 @@ class @SurveyApp extends Backbone.View
     @formEditorEl = @$(".-form-editor")
 
     addOpts      = @$("#additional-options")
+
+    # watch for changes on the title and description
+    for _s in ["form_title", "description"]
+      do (setting=_s)=>
+        elem = @$(".#{setting}")
+        elem.html es  if (es = @survey.settings.get(setting))
+        eip =
+          callback: (u, ent)=>
+            @survey.settings.set setting, ent
+            ent
+        elem.editInPlace eip
 
     @survey.rows.trigger("reset")
 
