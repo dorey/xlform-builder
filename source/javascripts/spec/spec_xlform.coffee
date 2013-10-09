@@ -43,7 +43,7 @@ describe "xlform survey model (XLF.Survey)", ->
 
       list = @firstRow.getList()
       expect(list).toBeDefined()
-      expect(list.name).toBe("yes_no")
+      expect(list.get("name")).toBe("yes_no")
 
   describe "with custom surveys", ->
     beforeEach ->
@@ -111,14 +111,14 @@ describe "xlform survey model (XLF.Survey)", ->
       r1type = row1.get("type")
       expect(r1type.get("typeId")).toBe("select_multiple")
       expect(r1type.get("listName")).toBe("x")
-      expect(row1.getList().name).toBe("x")
+      expect(row1.getList().get("name")).toBe("x")
       # change row to to "select_multiple y".
 
       r1type.set("value", "select_multiple y")
       expect(r1type.get("typeId")).toBe("select_multiple")
       expect(r1type.get("listName")).toBe("y")
       expect(row1.toJSON().type).toBe("select_multiple y")
-      expect(row1.getList().name).toBe("y")
+      expect(row1.getList().get("name")).toBe("y")
 
       # change row to "text"
       row1.get("type").set("value", "text")
@@ -127,7 +127,7 @@ describe "xlform survey model (XLF.Survey)", ->
       # Right now, thinking that we should keep the list around
       # and test to make sure the exported value doesn't have a list
       expect(row1.get("type").get("listName")).toBeDefined()
-      expect(row1.getList().name).toBeDefined()
+      expect(row1.getList().get("name")).toBeDefined()
       expect(row1.toJSON().type).toBe("text")
       ``
   describe "groups", ->
@@ -150,16 +150,16 @@ describe "xlform survey model (XLF.Survey)", ->
 
       # test original state
       firstRow = @pizzaSurvey.rows.first()
-      expect(firstRow.getList().name).toBe("yes_no")
+      expect(firstRow.getList().get("name")).toBe("yes_no")
 
       # change the list for first question to be "yes_no_maybe" instead of "yes_no"
-      expect(firstRow.getList().name).toBe("yes_no")
+      expect(firstRow.getList().get("name")).toBe("yes_no")
       firstRow.setList(ynm)
-      expect(firstRow.getList().name).toBe("yes_no_maybe")
+      expect(firstRow.getList().get("name")).toBe("yes_no_maybe")
 
       # change it back
       firstRow.setList("yes_no")
-      expect(firstRow.getList().name).toBe("yes_no")
+      expect(firstRow.getList().get("name")).toBe("yes_no")
 
       # cannot change it to a nonexistant list
       expect(-> firstRow.setList("nonexistant_list")).toThrow()
