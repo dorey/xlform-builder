@@ -230,9 +230,6 @@ class XLF.Row extends BaseModel
   getValue: (what)->
     @get(what).get("value")
 
-  _setType: (typeStr)->
-    @set "type", new XLF.RD("type", typeStr, @)
-
   getList: ->
     listName = @get("type")?.get("listName")
     @_parent.choices.get(listName)  if listName
@@ -244,8 +241,8 @@ class XLF.Row extends BaseModel
 
   validate: ->
     for key, val of @attributes
-      unless val instanceof XLF.RD
-        @set key, new XLF.RD(key, val, @), {silent: true}
+      unless val instanceof XLF.RowDetail
+        @set key, new XLF.RowDetail(key, val, @), {silent: true}
     ``
 
   attributesArray: ()->
@@ -269,7 +266,7 @@ class XLF.Rows extends Backbone.Collection
     else
       new XLF.Row(obj)
 
-class XLF.RD extends BaseModel
+class XLF.RowDetail extends BaseModel
   constructor: (@key, valOrObj={}, @parentRow)->
     super()
     vals2set = {}
