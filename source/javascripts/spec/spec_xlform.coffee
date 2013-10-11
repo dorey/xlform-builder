@@ -39,7 +39,7 @@ describe "xlform survey model (XLF.Survey)", ->
       expect(@firstRow.getValue("type")).toBe("select_one yes_no")
       typeDetail = @firstRow.get("type")
       expect(typeDetail.get("typeId")).toBe("select_one")
-      expect(typeDetail.get("listName")).toBe "yes_no"
+      expect(typeDetail.get("list").get("name")).toBe "yes_no"
 
       list = @firstRow.getList()
       expect(list).toBeDefined()
@@ -96,11 +96,6 @@ describe "xlform survey model (XLF.Survey)", ->
 
       r1type = row1.get("type")
       expect(r1type.get("rowType").name).toBe("text")
-      expect(r1type.get("listName")).not.toBeDefined()
-      for n in [1,2,3]
-        newListName = "colors#{n}"
-        r1type.set("value", "select_one #{newListName}")
-        expect(r1type.get("listName")).toBe(newListName)
 
       # # a survey with 2 lists: "x" and "y"
       srv = @createSurvey [""""select_multiple x",a,a,a"""],
@@ -109,13 +104,13 @@ describe "xlform survey model (XLF.Survey)", ->
       row1 = srv.rows.at(0)
       r1type = row1.get("type")
       expect(r1type.get("typeId")).toBe("select_multiple")
-      expect(r1type.get("listName")).toBe("x")
+      expect(r1type.get("list").get("name")).toBe("x")
       expect(row1.getList().get("name")).toBe("x")
       # change row to to "select_multiple y".
 
       r1type.set("value", "select_multiple y")
       expect(r1type.get("typeId")).toBe("select_multiple")
-      expect(r1type.get("listName")).toBe("y")
+      expect(r1type.get("list").get("name")).toBe("y")
       expect(row1.toJSON().type).toBe("select_multiple y")
       expect(row1.getList().get("name")).toBe("y")
 
@@ -125,9 +120,14 @@ describe "xlform survey model (XLF.Survey)", ->
 
       # Right now, thinking that we should keep the list around
       # and test to make sure the exported value doesn't have a list
-      expect(row1.get("type").get("listName")).toBeDefined()
+      expect(row1.get("type").get("list").get("name")).toBeDefined()
       expect(row1.getList().get("name")).toBeDefined()
       expect(row1.toJSON().type).toBe("text")
+
+      # adding an invalid list will break things.
+      setToInvalidList = ()->
+        row1.get("type").set("value", "select_one badlist")
+      expect(setToInvalidList).toThrow()
       ``
   describe "groups", ->
     it "can add a group", ->

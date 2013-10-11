@@ -213,7 +213,11 @@ class XLF.Row extends BaseModel
       # we need to keep typeId, listName, and orOther in sync.
       [tpid, p2, p3] = newType.split(" ")
       typeDetail.set("typeId", tpid, silent: true)
-      typeDetail.set("listName", p2, silent: true) if p2
+      if p2
+        typeDetail.set("listName", p2, silent: true)
+        matchedList = @_parent.choices.get(p2)
+        throw new Error("Matching list not found: #{p2}")  unless matchedList
+        typeDetail.set("list", matchedList)
       typeDetail.set("orOther", p3, silent: true)  if p3 is "or_other"
       if (rtp = XLF.lookupRowType(tpid))
         typeDetail.set("rowType", rtp, silent: true)
@@ -234,13 +238,12 @@ class XLF.Row extends BaseModel
     @get(what).get("value")
 
   getList: ->
-    listName = @get("type")?.get("listName")
-    @_parent.choices.get(listName)  if listName
+    @get("type")?.get("list")
 
   setList: (list)->
     listToSet = @_parent.choices.get(list)
     throw new Error("List not found: #{list}")  unless listToSet
-    @get("type").set("listName", listToSet.get("name"))
+    @get("type").set("list", listToSet)
 
   validate: ->
     for key, val of @attributes

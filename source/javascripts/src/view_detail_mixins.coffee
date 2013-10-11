@@ -40,7 +40,7 @@
       """
       rtp = @model.get("rowType")
       if rtp.specifyChoice
-        listName = @model.get("listName")
+        listName = @model.get("list").get("name")
         if listName
           htmlStr += """ from <span class="select-list"><code>#{listName}</code></span> <button class="edit-list" data-list-name="#{listName}">Edit</button>"""
         else
