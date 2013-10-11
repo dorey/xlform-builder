@@ -79,8 +79,7 @@ describe "xlform survey model (XLF.Survey)", ->
     it "breaks with an unk qtype", ->
       makeInvalidTypeSurvey = =>
         @createSurvey ["telegram,a,a,a"]
-      # TODO> whynot?
-      # expect(makeInvalidTypeSurvey).toThrow()
+      expect(makeInvalidTypeSurvey).toThrow()
 
     it "exports and imports without breaking", ->
       scsv = @createSurveyCsv ["text,text,text,text"]

@@ -215,7 +215,10 @@ class XLF.Row extends BaseModel
       typeDetail.set("typeId", tpid, silent: true)
       typeDetail.set("listName", p2, silent: true) if p2
       typeDetail.set("orOther", p3, silent: true)  if p3 is "or_other"
-      typeDetail.set("rowType", rtp, silent: true)  if (rtp = XLF.lookupRowType(tpid))
+      if (rtp = XLF.lookupRowType(tpid))
+        typeDetail.set("rowType", rtp, silent: true)
+      else
+        throw new Error "Type not found: #{tpid}"
     processType(typeDetail, tpVal, {})
     typeDetail.on "change:value", processType
     typeDetail.on "change:listName", (rd, listName, ctx)->
