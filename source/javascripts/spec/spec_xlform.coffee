@@ -163,6 +163,13 @@ describe "xlform survey model (XLF.Survey)", ->
       # cannot change it to a nonexistant list
       expect(-> firstRow.setList("nonexistant_list")).toThrow()
 
+      # changing name of list object will not unlink the list
+      list = firstRow.getList()
+      list.set("name", "no_yes")
+      expect(firstRow.getList()).toBeDefined()
+      expect(firstRow.getList()?.get("name")).toBe("no_yes")
+
+
     it "can change options for a list", ->
       yn = @pizzaSurvey.choices.get("yes_no")
       expect(yn.options).toBeDefined()
