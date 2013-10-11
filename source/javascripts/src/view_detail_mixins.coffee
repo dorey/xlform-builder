@@ -40,7 +40,7 @@
       """
       rtp = @model.get("rowType")
       if rtp.specifyChoice
-        listName = @model.get("list").get("name")
+        listName = @model.get("list")?.get("name")
         if listName
           htmlStr += """ from <span class="select-list"><code>#{listName}</code></span> <button class="edit-list" data-list-name="#{listName}">Edit</button>"""
         else
@@ -80,8 +80,9 @@
           @rowView.newListView(@)
           ""
         else
-          @model.set("listName", ent)
-          ent
+          list = @model.parentRow._parent.choices.get(ent)
+          @model.set("list", list)
+          "<code>#{ent}</code>"
       selectListOpts =
         field_type: "select"
         select_elem: $lsel

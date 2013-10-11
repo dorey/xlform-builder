@@ -146,8 +146,7 @@ class @SurveyApp extends Backbone.View
     @onPublish.call(@, arguments)
   editList: (evt)->
     $et = $(evt.target)
-    listName = $(evt.target).data("listName")
-    list = @survey.choices.get(listName)
+    list = @survey.choices.get $et.siblings(".select-list").text()
     lv = new XLF.EditListView(choiceList: list, survey: @survey)
     $lvel = lv.render().$el.css $et.position()
     $et.parents("div").eq(0).append $lvel
@@ -207,7 +206,7 @@ class XLF.EditListView extends Backbone.View
   className: "new-list-view"
   events:
     "click .list-ok": "saveList"
-    "click .list-cancel": "cancelList"
+    "click .list-cancel": "closeList"
     "click .list-add-row": "addRow"
     "click .list-delete-row": "deleteRow"
   render: ->
@@ -250,9 +249,8 @@ class XLF.EditListView extends Backbone.View
       @survey.trigger "change"
     else
       @$(".error").text("Error saving: ").show()
-  cancelList: ->
-    if confirm("Are you sure you want to cancel this list?")
-      @$el.remove()
+  closeList: ->
+    @$el.remove()
   addRow: ->
     @collection.add placeholder: "New option"
   deleteRow: ->
