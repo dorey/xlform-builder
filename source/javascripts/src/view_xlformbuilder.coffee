@@ -44,6 +44,8 @@ class XlfDetailView extends Backbone.View
 
 class XlfRowView extends Backbone.View
   tagName: "li"
+  events:
+   "click .create-new-list": "createListForRow"
   initialize: ()->
     @model.on "change", @render, @
     typeDetail = @model.get("type")
@@ -59,6 +61,12 @@ class XlfRowView extends Backbone.View
     for [key, val] in @model.attributesArray()
       v = new XlfDetailView(model: val, rowView: @).renderInRowView(@)
     @
+  createListForRow: (evt)->
+    $et = $(evt.target)
+    lv = new XLF.EditListView(choiceList: new XLF.ChoiceList(), rowView: @, survey: @model._parent)
+    $lvel = lv.render().$el.css $et.position()
+    $et.parents("div").eq(0).append $lvel
+
   newListView: (rv)->
     lv = new XLF.EditListView(choiceList: new XLF.ChoiceList(), survey: @model._parent, rowView: @)
     $lvel = lv.render().$el.css @$(".select-list").position()
@@ -263,7 +271,7 @@ class XLF.EditListView extends Backbone.View
       @survey.choices.add @choiceList
       @$el.remove()
       if @rowView
-        @rowView.model.get("type").set("listName", @choiceList.get("name"))
+        @rowView.model.get("type").set("list", @choiceList)
       @survey.trigger "change"
     else
       @$(".error").text("Error saving: ").show()
