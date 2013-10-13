@@ -8,9 +8,11 @@
       """
     afterRender: ->
       @$el.find("code").editInPlace
+        save_if_nothing_changed: true
         callback: (uu, ent)=>
           @model.set("value", ent)
-          ent
+          if ent is "" then "..." else ent
+
   VX.name =
     html: ->
       """
@@ -18,10 +20,11 @@
       """
     afterRender: ->
       @$el.find("code").editInPlace
+        save_if_nothing_changed: true
         callback: (uu, ent)=>
           cleanName = XLF.sluggify ent
           @model.set("value", cleanName)
-          cleanName
+          if ent is "" then "..." else cleanName
 
   VX.required =
     html: ->
