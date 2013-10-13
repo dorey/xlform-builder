@@ -105,15 +105,33 @@ class @SurveyApp extends Backbone.View
     addOpts      = @$("#additional-options")
 
     # watch for changes on the title and description
-    for _s in ["form_title", "description"]
-      do (setting=_s)=>
-        elem = @$(".#{setting}")
-        elem.html es  if (es = @survey.settings.get(setting))
-        eip =
-          callback: (u, ent)=>
+    do =>
+      setting = "form_title"
+      elem = @$(".#{setting}")
+      if (es = @survey.settings.get(setting))
+        elem.html es 
+      eip =
+        default_text: "New survey"
+        callback: (u, ent)=>
+          @survey.settings.set setting, ent
+          ent
+      elem.editInPlace eip
+    do =>
+      setting = "description"
+      elem = @$(".description")
+      default_text = "[survey description]"
+      if (es = @survey.settings.get(setting))
+        elem.html es
+      eip =
+        save_if_nothing_changed: true
+        default_text: default_text
+        callback: (u, ent)=>
+          if ent is ""
+            default_text
+          else
             @survey.settings.set setting, ent
             ent
-        elem.editInPlace eip
+      elem.editInPlace eip
 
     @survey.rows.trigger("reset")
 
