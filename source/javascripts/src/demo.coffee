@@ -44,7 +44,9 @@ sampleForms = {}
     $("#preview").empty()
     publishCb = ()->
       # called by surveyapp
-      csv2dom @survey.toCSV(), "#preview"
+      window.surveyCsv = @survey.toCSV()
+      log "Storing survey csv in 'window.surveyCsv'."
+      csv2dom window.surveyCsv, "#preview"
 
     app = new SurveyApp
       choices: $choices
