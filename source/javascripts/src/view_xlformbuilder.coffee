@@ -83,7 +83,8 @@ class XlfRowView extends Backbone.View
     parentWrap = clAnchor.parent()
     leftMargin = clAnchor.eq(0).position().left - (padding + parentElMarginLeft)
     $lvel = lv.render().$el.css "margin-left", leftMargin
-    parentWrap.append $lvel
+    parentWrap.append $lvel.hide()
+    $lvel.slideDown 175
 
   newListView: (rv)->
     lv = new XLF.EditListView(choiceList: new XLF.ChoiceList(), survey: @model._parent, rowView: @)
@@ -280,14 +281,16 @@ class XLF.EditListView extends Backbone.View
   saveList: ->
     if @choiceList.isValid()
       @survey.choices.add @choiceList
-      @$el.remove()
       if @rowView
         @rowView.model.get("type").set("list", @choiceList)
-      @survey.trigger "change"
+      @_remove =>
+        @survey.trigger "change"
     else
       @$(".error").text("Error saving: ").show()
   closeList: ->
-    @$el.remove()
+    @_remove()
+  _remove: (cb)->
+    @$el.slideUp 175, "swing", cb
   addRow: ->
     @collection.add placeholder: "New option"
   deleteRow: ->
