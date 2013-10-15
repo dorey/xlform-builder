@@ -45,11 +45,11 @@
       if rtp.specifyChoice
         listName = @model.get("list")?.get("name")
         if listName
-          htmlStr += """ from <span class="select-list"><code>#{listName}</code></span> <button class="edit-list" data-list-name="#{listName}">Edit</button>"""
+          htmlStr += """ from <span class="select-list choice-list-anchor"><code>#{listName}</code></span> <button class="edit-list" data-list-name="#{listName}">Edit</button>"""
         else if @model.parentRow._parent.choices.models.length is 0
-          htmlStr += """ from <button class="create-new-list">create a list</button>"""
+          htmlStr += """ from <button class="create-new-list choice-list-anchor">create a list</button>"""
         else
-          htmlStr += """ from <span class="select-list missing">choose a list</span>"""
+          htmlStr += """ from <span class="select-list choice-list-anchor missing">choose a list</span>"""
 
       @$el.html htmlStr
 

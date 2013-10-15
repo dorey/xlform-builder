@@ -66,14 +66,24 @@ class XlfRowView extends Backbone.View
     $et = $(evt.target)
     survey = @model._parent
     list = @model.getList()
-    lv = new XLF.EditListView(choiceList: list, survey: survey, rowView: @)
-    $lvel = lv.render().$el.css $et.position()
-    $et.parents("div").eq(0).append $lvel
+    @_displayEditListView($et, survey, list)
+
   createListForRow: (evt)->
     $et = $(evt.target)
-    lv = new XLF.EditListView(choiceList: new XLF.ChoiceList(), rowView: @, survey: @model._parent)
-    $lvel = lv.render().$el.css $et.position()
-    $et.parents("div").eq(0).append $lvel
+    survey = @model._parent
+    list = new XLF.ChoiceList()
+    @_displayEditListView($et, survey, list)
+
+  _displayEditListView: ($et, survey, list)->
+    lv = new XLF.EditListView(choiceList: list, survey: survey, rowView: @)
+    # the .detail-view element has a left margin of 20px
+    padding = 6
+    parentElMarginLeft = 20
+    clAnchor = $et.parent().find(".choice-list-anchor")
+    parentWrap = clAnchor.parent()
+    leftMargin = clAnchor.eq(0).position().left - (padding + parentElMarginLeft)
+    $lvel = lv.render().$el.css "margin-left", leftMargin
+    parentWrap.append $lvel
 
   newListView: (rv)->
     lv = new XLF.EditListView(choiceList: new XLF.ChoiceList(), survey: @model._parent, rowView: @)
