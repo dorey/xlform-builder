@@ -46,6 +46,7 @@ class XlfRowView extends Backbone.View
   tagName: "li"
   events:
    "click .create-new-list": "createListForRow"
+   "click .edit-list": "editListForRow"
   initialize: ()->
     @model.on "change", @render, @
     typeDetail = @model.get("type")
@@ -61,6 +62,13 @@ class XlfRowView extends Backbone.View
     for [key, val] in @model.attributesArray()
       v = new XlfDetailView(model: val, rowView: @).renderInRowView(@)
     @
+  editListForRow: (evt)->
+    $et = $(evt.target)
+    survey = @model._parent
+    list = @model.getList()
+    lv = new XLF.EditListView(choiceList: list, survey: survey, rowView: @)
+    $lvel = lv.render().$el.css $et.position()
+    $et.parents("div").eq(0).append $lvel
   createListForRow: (evt)->
     $et = $(evt.target)
     lv = new XLF.EditListView(choiceList: new XLF.ChoiceList(), rowView: @, survey: @model._parent)
@@ -77,7 +85,6 @@ class @SurveyApp extends Backbone.View
   events:
     "click .delete-row": "clickRemoveRow"
     "click .insert-row": "clickInsertRow"
-    "click .edit-list": "editList"
     "click #add-question": "addNewRow"
     "click #publish-survey": "publishButtonClick"
 
@@ -170,12 +177,6 @@ class @SurveyApp extends Backbone.View
     @survey.rows.trigger("reset")
   publishButtonClick: (evt)->
     @onPublish.call(@, arguments)
-  editList: (evt)->
-    $et = $(evt.target)
-    list = @survey.choices.get $et.siblings(".select-list").text()
-    lv = new XLF.EditListView(choiceList: list, survey: @survey)
-    $lvel = lv.render().$el.css $et.position()
-    $et.parents("div").eq(0).append $lvel
 
 ###
 This is the view for the survey-wide details that appear at the bottom
