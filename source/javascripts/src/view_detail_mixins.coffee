@@ -44,10 +44,26 @@
       rtp = @model.get("rowType")
       if rtp.specifyChoice
         listName = @model.get("list")?.get("name")
-        if listName
-          htmlStr += """ from <span class="select-list choice-list-anchor"><code>#{listName}</code></span> <button class="edit-list" data-list-name="#{listName}">Edit</button>"""
-        else if @model.parentRow._parent.choices.models.length is 0
-          htmlStr += """ from <button class="create-new-list choice-list-anchor">create a list</button>"""
+        numChoices = @model.parentRow._parent.choices.models.length
+        if listName and numChoices is 1
+          # in this case, there is nothing to choose from, so no dropdown.
+          htmlStr += """ from
+              <code class="choice-list-anchor">#{listName}</code>
+              <button class="edit-list" data-list-name="#{listName}">Edit</button>
+              or
+              <button class="create-new-list">create a list</button>
+            """
+        else if listName
+          htmlStr += """ from
+              <span class="select-list choice-list-anchor like-code">#{listName}</span>
+              <button class="edit-list" data-list-name="#{listName}">Edit</button>
+              or
+              <button class="create-new-list">create a list</button>
+            """
+        else if numChoices is 0
+          htmlStr += """ from
+              <button class="create-new-list choice-list-anchor">create a list</button>
+            """
         else
           htmlStr += """ from <span class="select-list choice-list-anchor missing">choose a list</span>"""
 
@@ -70,24 +86,13 @@
 
       survey = @model.parentRow._parent
       $lsel = $("<select>", class: "inplace_field")
-      $og = $("<optgroup>", label: "Select a list")
-      listIds = survey.choices.map (c)->
-        $og.append $("<option>", text: c.get("name"), value: c.get("name"))
-        c.get("name")
-      $lsel.append $og
-      $og = $("<optgroup>", label: " -OR- ")
-      xlfCreateListSignal = "xlf:createList"
-      $og.append $("<option>", text: "Create a new list", value: xlfCreateListSignal)
-      $lsel.append $og
+      for c in survey.choices.models
+        $lsel.append $("<option>", text: c.get("name"), value: c.get("name"))
 
       changeListCb = (un, ent)=>
-        if ent is xlfCreateListSignal
-          @rowView.newListView(@)
-          ""
-        else
-          list = @model.parentRow._parent.choices.get(ent)
-          @model.set("list", list)
-          "<code>#{ent}</code>"
+        list = @model.parentRow._parent.choices.get(ent)
+        @model.set("list", list)
+        "<code>#{ent}</code>"
       selectListOpts =
         field_type: "select"
         select_elem: $lsel
