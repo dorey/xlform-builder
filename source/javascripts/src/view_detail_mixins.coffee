@@ -39,7 +39,7 @@
     html: ->
       typeId = @model.get("typeId")
       htmlStr = """
-      <span class="select-tp">type: <code>#{typeId}</code></span>
+      type: <span class="select-tp"><code>#{typeId}</code></span>
       """
       rtp = @model.get("rowType")
       if rtp.specifyChoice
