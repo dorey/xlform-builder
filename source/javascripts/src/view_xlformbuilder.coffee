@@ -167,15 +167,25 @@ class @SurveyApp extends Backbone.View
   reset: ->
     fe = @formEditorEl.empty()
     @survey.forEachRow (row)->
-      fe.append(new XlfRowView(model: row).render().el)
+      # row._slideDown is for add/remove animation
+      $el = new XlfRowView(model: row).render().$el
+      if row._slideDown
+        row._slideDown = false
+        fe.append($el.hide())
+        $el.slideDown 175
+      else
+        fe.append($el)
   clickRemoveRow: (evt)->
     evt.preventDefault()
     if confirm("Are you sure you want to delete this question? This action cannot be undone.")
-      rowId = $(evt.target).data("rowCid")
+      $et = $(evt.target)
+      rowId = $et.data("rowCid")
+      rowEl = $et.parents("li").eq(0)
       matchingRow = @survey.rows.find (row)-> row.cid is rowId
       if matchingRow
         @survey.rows.remove matchingRow
-      @survey.rows.trigger "reset"
+      # this slideUp is for add/remove row animation
+      rowEl.slideUp 175, "swing", ()=> @survey.rows.trigger "reset"
   clickInsertRow: (evt)->
     cid = $(evt.target).parents("li").eq(0).data("row-model-id")
     newIndex = @survey.rows.indexOf(@survey.rows.get(cid)) + 1
@@ -184,7 +194,10 @@ class @SurveyApp extends Backbone.View
     @addRowAtIndex(_parent: @survey)
   addRowAtIndex: (opts={}, atIndex=false)->
     atIndex = @survey.rows.length  if atIndex is false
-    @survey.rows.add(new XLF.Row(opts), at: atIndex)
+    # row._slideDown is for add/remove animation
+    nRow = new XLF.Row(opts)
+    nRow._slideDown = true
+    @survey.rows.add(nRow, at: atIndex)
   publishButtonClick: (evt)->
     @onPublish.call(@, arguments)
 
