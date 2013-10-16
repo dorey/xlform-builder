@@ -63,16 +63,22 @@ class XlfRowView extends Backbone.View
       v = new XlfDetailView(model: val, rowView: @).renderInRowView(@)
     @
   editListForRow: (evt)->
+    @_ensureNoListViewsOpen()
     $et = $(evt.target)
     survey = @model._parent
     list = @model.getList()
     @_displayEditListView($et, survey, list)
 
   createListForRow: (evt)->
+    @_ensureNoListViewsOpen()
     $et = $(evt.target)
     survey = @model._parent
     list = new XLF.ChoiceList()
     @_displayEditListView($et, survey, list)
+
+  _ensureNoListViewsOpen: ->
+    # this is a temporary solution which aims to prevent simultaneous list-view edit boxes
+    throw new Error("ListView open")  if $(".edit-list-view").length > 0
 
   _displayEditListView: ($et, survey, list)->
     lv = new XLF.EditListView(choiceList: list, survey: survey, rowView: @)
@@ -261,7 +267,7 @@ class XLF.EditListView extends Backbone.View
       @collection.add placeholder: "Option 2"
     @collection.bind "change reset add remove", ()=> @render()
 
-  className: "new-list-view"
+  className: "edit-list-view"
   events:
     "click .list-ok": "saveList"
     "click .list-cancel": "closeList"
@@ -310,7 +316,9 @@ class XLF.EditListView extends Backbone.View
   closeList: ->
     @_remove()
   _remove: (cb)->
-    @$el.slideUp 175, "swing", cb
+    @$el.slideUp 175, "swing", =>
+      @$el.remove()
+      cb()
   addRow: ->
     @collection.add placeholder: "New option"
   deleteRow: ->
