@@ -185,7 +185,6 @@ class @SurveyApp extends Backbone.View
   addRowAtIndex: (opts={}, atIndex=false)->
     atIndex = @survey.rows.length  if atIndex is false
     @survey.rows.add(new XLF.Row(opts), at: atIndex)
-    @survey.rows.trigger("reset")
   publishButtonClick: (evt)->
     @onPublish.call(@, arguments)
 
