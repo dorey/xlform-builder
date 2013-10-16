@@ -166,6 +166,14 @@ class @SurveyApp extends Backbone.View
     @
   reset: ->
     fe = @formEditorEl.empty()
+    if @survey.rows.models.length is 0
+      fe.html """
+        <li class="editor-message empty">
+          <strong>This survey is currently empty.</strong><br>
+          You can add questions, notes, prompts, or other fields by clicking
+          <span class="underline">+ Add question</span> below.
+        </li>
+      """
     @survey.forEachRow (row)->
       # row._slideDown is for add/remove animation
       $el = new XlfRowView(model: row).render().$el
