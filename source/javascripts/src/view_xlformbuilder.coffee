@@ -314,4 +314,4 @@ Helper methods:
 ###
 XLF.sluggify = (str)->
   # Convert text to a slug/xml friendly format.
-  str.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '')
+  str.toLowerCase().replace(/\s/g, '_').replace(/\W/g, '').replace(/[_]+/g, "_")
