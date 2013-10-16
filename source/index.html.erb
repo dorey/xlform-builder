@@ -7,25 +7,35 @@ title: XLFormBuilder
     Sample forms:
 
     <script type="text/xlform" id="simplest">
-    "survey","type","name","label","hint"
+
+    "survey",
+    ,"type","name","label","hint"
     ,"text","name","What's your favorite word?","If you can't think of one, feel free to make one up"
+
     </script>
 
     <script type="text/xlform" id="favorite-color">
-    "survey","type","name","label","hint"
+
+    "survey",
+    ,"type","name","label","hint"
     ,"text","q1","What is your name?","type your name"
     ,"select_one colors","favcolor","What is your favorite color?"
-    "choices","list name","name","label"
+
+    "choices",
+    ,"list name","name","label"
     ,"colors","red","Red"
     ,"colors","green","Green"
     ,"colors","blue","Blue"
     "settings",
     ,"form_title"
     ,"favecolor"
+
     </script>
 
     <script type="text/xlform" id="census-xlform">
-    "survey","type","name","label"
+
+    "survey",
+    ,"type","name","label"
     ,"integer","q1","How many people were living or staying in this house, apartment, or mobile home on April 1, 2010?"
     ,"select_one yes_no","q2","Were there any additional people staying here April 1, 2010 that you did not include in Question 1?"
     ,"select_one ownership_type or_other","q3","Is this house, apartment, or mobile home: owned with mortgage, owned without mortgage, rented, occupied without rent?"
@@ -36,7 +46,9 @@ title: XLFormBuilder
     ,"text","q8","Is Person 1 of Hispanic, Latino or Spanish origin?"
     ,"text","q9","What is Person 1's race?"
     ,"select_one yes_no","q10","Does Person 1 sometimes live or stay somewhere else?"
-    "choices","list name","name","label"
+
+    "choices",
+    ,"list name","name","label"
     ,"yes_no","yes","Yes"
     ,"yes_no","no","No"
     ,"male_female","male","Male"
@@ -48,6 +60,7 @@ title: XLFormBuilder
     "settings"
     ,"form_title","form_id","description"
     ,"Census Questions (2010)","census2010","These are the US census questions from 2010."
+
     </script>
   </div>
   <div id="builder"></div>
