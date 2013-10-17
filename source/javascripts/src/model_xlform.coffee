@@ -216,8 +216,8 @@ class XLF.Row extends BaseModel
       if p2
         typeDetail.set("listName", p2, silent: true)
         matchedList = @_parent.choices.get(p2)
-        throw new Error("Matching list not found: #{p2}")  unless matchedList
-        typeDetail.set("list", matchedList)
+        if matchedList
+          typeDetail.set("list", matchedList)
       typeDetail.set("orOther", p3, silent: true)  if p3 is "or_other"
       if (rtp = XLF.lookupRowType(tpid))
         typeDetail.set("rowType", rtp, silent: true)
