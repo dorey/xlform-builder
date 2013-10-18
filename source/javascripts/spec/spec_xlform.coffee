@@ -124,10 +124,15 @@ describe "xlform survey model (XLF.Survey)", ->
       expect(row1.getList().get("name")).toBeDefined()
       expect(row1.toJSON().type).toBe("text")
 
-      # adding an invalid list will break things.
-      setToInvalidList = ()->
-        row1.get("type").set("value", "select_one badlist")
-      expect(setToInvalidList).toThrow()
+      # # adding an invalid list will break things.
+      #
+      # I'm thinking: adding an invalid list will only break validation of
+      # the survey. If it's not defined, it will prompt the user to make
+      # the row valid.
+      #
+      # setToInvalidList = ()->
+      #   row1.get("type").set("value", "select_one badlist")
+      # expect(setToInvalidList).toThrow()
       ``
   describe "groups", ->
     it "can add a group", ->
