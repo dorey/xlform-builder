@@ -120,7 +120,7 @@ XLF...
 
 XLF.lookupRowType = do->
   typeLabels = [
-    ["note", "Note (no response)", preventRequired: true],
+    ["note", "Note", preventRequired: true],
     ["text", "Text"], # expects text
     ["integer", "Integer"], #e.g. 42
     ["decimal", "Decimal"], #e.g. 3.14
@@ -132,8 +132,8 @@ XLF.lookupRowType = do->
     ["audio", "Audio", isMedia: true], # Can use phone microphone to record audio
     ["video", "Video", isMedia: true], # Can use phone camera to record video
     # ["calculate", "Calculate"],
-    ["select_one", "Select one", orOtherOption: true, specifyChoice: true],
-    ["select_multiple", "Select multiple", orOtherOption: true, specifyChoice: true]
+    ["select_one", "Select", orOtherOption: true, specifyChoice: true],
+    ["select_multiple", "Multiple choice", orOtherOption: true, specifyChoice: true]
   ]
 
   class Type
