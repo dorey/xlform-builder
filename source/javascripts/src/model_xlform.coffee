@@ -292,6 +292,12 @@ class XLF.RowDetail extends BaseModel
       @on "change", ()->
         @hidden = @get("value") is @_oValue
 
+    @on "change:value", (rd, val, ctxt)=>
+      @parentRow.trigger "change", @key, val, ctxt
+    if @key is "type"
+      @on "change:list", (rd, val, ctxt)=>
+        @parentRow.trigger "change", @key, val, ctxt
+
 ###
 XLF...
   "Option",
