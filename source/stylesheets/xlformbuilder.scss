@@ -21,6 +21,114 @@
     font-family: "Courier New", monospace;
   }
 }
+.cl-fixed-row {
+  margin-left: -15px;
+
+  .select-type-box {
+    float: left;
+    width: 165px;
+    padding: 2px 7px 2px 3px;
+    border: 1px solid #ccc;
+    margin: 0 3px 0 0;
+    select {
+      padding: 6px;
+      font-size: 18px;
+    }
+  }
+  .select-list-box {
+    max-width: 50%;
+    line-height: 3em;
+    padding: 0 5px;
+    select {
+      padding: 6px;
+      font-size: 18px;
+    }
+  }
+  .selected-list-summary {
+    border-bottom: 1px solid #ccc;
+  }
+  select.placeholding {
+    font-style: italic;
+    color: #666;
+  }
+  .selected-list-summary {
+    font-size: 12px;
+    line-height: 2.2em;
+    margin-bottom: 2px;
+  }
+  .n-lists-available {
+    font-size: 11px;
+  }
+
+  .expanded {
+    .iwrap {
+      border: 1px solid #777;
+      background-color: rgba(255,255,255,0.2);
+      padding-bottom: 4px;
+      margin-right: 95px;
+    }
+    h4.list-name {
+      margin: 0;
+      border: 1px solid #777;
+      height: 24px;
+      padding: 6px 0;
+      margin: 2px;
+      float: left;
+      text-align: center;
+      background-color: #ddd;
+      line-height: 25px;
+    }
+    p.buttons {
+      float: right;
+      margin: 4px 6px;
+    }
+    textarea {
+      margin-left: 26px;
+    }
+  }
+
+  .cl-span-1, .cl-span-2, .cl-span-3, .cl-span-4, .cl-span-5, .cl-span-6, .cl-span-7 {
+    margin-left: 15px;
+    float: left;
+  }
+  .cl-span-1 {
+    width: 80px;
+  }
+  .cl-span-2 {
+    width: 160px;
+  }
+  .cl-span-3 {
+    width: 240px;
+  }
+  .cl-span-4 {
+    width: 320px;
+  }
+  .cl-span-5 {
+    width: 400px;
+  }
+  .cl-span-6 {
+    width: 480px;
+  }
+  .cl-span-7 {
+    width: 560px;
+  }
+  .float-left {
+    float: left;
+  }
+}
+
+.cf {
+  // http://nicolasgallagher.com/micro-clearfix-hack/
+  *zoom: 1;
+  &:before, &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
 .form-editor-wrap {
   color: rgb(50, 53, 70);
   label {

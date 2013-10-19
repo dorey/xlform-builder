@@ -16,7 +16,7 @@ class XlfDetailView extends Backbone.View
   of each row of the XLForm. When the view is initialized,
   a mixin from "DetailViewMixins" is applied.
   ###
-  className: "detail-view"
+  className: "detail-view cl-fixed-row"
   initialize: ({@rowView})->
     unless @model.key
       throw new XlformError "RowDetail does not have key"
@@ -258,6 +258,117 @@ class XlfSurveyDetailView extends Backbone.View
   # * Calculation
   # * Media?
 ###
+
+class XLF.ManageListView extends Backbone.View
+  initialize: ({@rowView})->
+    @row = @rowView.model
+    @survey = @row._parent
+    ``
+  className: "cl-fixed-row cf"
+  events:
+    "click .expand-list": "expandList"
+  expandList: (evt)->
+    evt.preventDefault()
+    row = @row
+    summ = @$(".bc-wrap.summarized")
+    dims = width: summ.find("select").width()
+    exp = @$(".bc-wrap.expanded")
+    list = row.getList()
+    taVals = []
+    for opt in list.options.models
+      taVals.push opt.get("label")
+    placeHolderText = """Enter 1 option per line"""
+    exp.html("""
+      <div class="iwrap">
+        <div class="cf">
+          <h4 class="list-name">#{list.get("name")}</h4>
+          <p class="buttons"><button class="cl-save">Save</button><button class="cl-cancel">Cancel</button></p>
+        </div>
+        <textarea style="height:#{19 * taVals.length}px" placeholder="#{placeHolderText}">#{taVals.join("\n")}</textarea>
+      </div>
+      """)
+    exp.find("h4").eq(0).css(dims)
+    hideCl = ->
+      exp.hide()
+      summ.show()
+    saveButt = exp.find(".cl-save").bind "click", hideCl
+    exp.find(".cl-cancel").bind "click", hideCl
+
+    ta = exp.find("textarea")
+    resizeTa = (evt)->
+      lineCt = ta.data("line-count")
+      valLines = ta.val().split("\n").length
+      if lineCt isnt valLines and valLines >= 2
+        ta.css("height", valLines * 19)
+        ta.data("line-count", valLines)
+    ta.on "keyup", resizeTa
+    ta.on "blur", ->
+      taVals = for line in ta.val().split("\n") when line.match(/\w+/)
+        name: XLF.sluggify(line), label: line
+      opts = new XLF.Options(taVals)
+      saveButt.unbind("click")
+      saveButt.bind "click", ->
+        list.options = opts
+        hideCl()
+        row.trigger("change")
+    summ.hide()
+    exp.show()
+
+  render: ->
+    elHtml = ""
+    numChoices = @survey.choices.models.length
+    list = @row.getList()
+    listName = @row.get("type").get("listName")
+    editMode = @rowView.$el.find(".edit-list-view").length isnt 0
+
+    aa_selectTypeBox = $("<div>", class: "select-type-box cl-span-2 cf").appendTo @$el
+    aa_select = $("<select>")
+    aa_selectTypeBox.html aa_select
+    for [tlabel, tname] in XLF.lookupRowType.typeSelectList()
+      $("<option>", text: "#{tlabel}", value: tname).appendTo aa_select
+    bc_wrap = $("<div>", class: "bc-wrap cl-span-7 cf summarized").appendTo @$el
+    bc_wrap_hidden = $("<div>", class: "bc-wrap cl-span-7 cf expanded").hide().appendTo @$el
+    a_selectBox = $("<div>", class: "select-list-box float-left").appendTo bc_wrap
+    b_selectedListSummary = $("<div>", class: "selected-list-summary").appendTo bc_wrap
+    c_nListsAvailable = $("<div>", class: "n-lists-available").appendTo bc_wrap
+
+    c_nListsAvailable.text "#{numChoices} list#{if numChoices is 1 then '' else 's'} available "
+
+    if list
+      opts = (opt.get("name")  for opt in list.options.models)
+      optsStr = "#{opts.join(',')}"
+      maxChars = 30
+      if optsStr.length > maxChars
+        optsStr = optsStr.slice(0,maxChars) + "..."
+      b_selectedListSummary.html "[#{optsStr}] <a href='#' class='expand-list'>expand/edit</a>"
+    else
+      b_selectedListSummary.html "<em>No list selected</em>"
+
+    if numChoices is 0
+      sel = $("<select>", {disabled: 'disabled'}).html($("<option>", text: "No lists available"))
+      a_selectBox.html sel
+    else
+      sel = $("<select>")
+      unless list
+        placeholder = $("<option>", value: "", selected: "selected").html("Select a list...")
+        sel.append(placeholder)
+        sel.addClass("placeholding")
+        sel.focus (evt)-> sel.removeClass("placeholding")
+        sel.change (evt)-> placeholder.remove()
+
+      for choiceList in @survey.choices.models
+        clName = choiceList.get("name")
+        if list and clName is list.get("name")
+          opt = $("<option>", value: clName, selected: "selected")
+        else
+          opt = $("<option>", value: clName)
+        opt.html(clName).appendTo(sel)
+      sel.change (evt)=>
+        nextList = @survey.choices.get $(evt.target).val()
+        @row.get("type").set("list", nextList)
+      a_selectBox.html sel
+    c_nListsAvailable.append """<button class='create-new-list2'>(+) Create new list</button>"""
+    @
 
 class XLF.EditListView extends Backbone.View
   initialize: ({@survey, @rowView, @choiceList})->

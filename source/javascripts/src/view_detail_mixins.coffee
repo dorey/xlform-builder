@@ -66,8 +66,10 @@
             """
         else
           htmlStr += """ from <span class="select-list choice-list-anchor missing">choose a list</span>"""
-
-      @$el.html htmlStr
+        @$el.html htmlStr
+        @$el.append new XLF.ManageListView({rowView: @rowView}).render().$el
+      else
+        @$el.html htmlStr
 
       typeSelectCb = (unused, entered)=>
         @model.set("value", entered)
