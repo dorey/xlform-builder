@@ -9,7 +9,16 @@
     text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
     margin: 0;
   }
-  h2.description {
+  h1.title {
+    .display-title {
+      color: #444;
+    }
+    .form-name {
+      font-size: 13px;
+      color: #888;
+    }
+  }
+  h2.display-description {
     color: rgba(0, 0, 0, .3);
     font-weight: bold;
     font-size: 26px;
@@ -44,9 +53,6 @@
       font-size: 18px;
     }
   }
-  .selected-list-summary {
-    border-bottom: 1px solid #ccc;
-  }
   select.placeholding {
     font-style: italic;
     color: #666;
@@ -57,6 +63,7 @@
     margin-bottom: 2px;
   }
   .n-lists-available {
+    border-bottom: 1px solid #ccc;
     font-size: 11px;
   }
 
@@ -83,7 +90,7 @@
       margin: 4px 6px;
     }
     textarea {
-      margin-left: 26px;
+      margin-left: 0;
     }
   }
 
@@ -148,7 +155,10 @@
       margin: 0;
       padding: 0;
       border-bottom: 1px solid #ddd;
-
+      opacity: 0.8;
+      &.xlf-selected {
+        opacity: 1;
+      }
       .detail-view {
         margin: 6px 20px 0;
         &:last-child {
