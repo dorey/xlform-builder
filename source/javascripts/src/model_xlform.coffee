@@ -149,10 +149,7 @@ XLF.lookupRowType = do->
     output
 
   exp.typeSelectList = do ->
-    tlids = []
-    for [id, descrip] in typeLabels
-      tlids.push [descrip, id]
-    () -> tlids
+    () -> types
 
   exp
 
@@ -273,6 +270,7 @@ class XLF.Rows extends Backbone.Collection
       new XLF.Row(obj)
 
 class XLF.RowDetail extends BaseModel
+  idAttribute: "name"
   constructor: (@key, valOrObj={}, @parentRow)->
     super()
     vals2set = {}
@@ -392,7 +390,7 @@ class XLF.SurveyDetails extends Backbone.Collection
 
 class XLF.Settings extends BaseModel
   defaults:
-    form_title: "New form"
+    form_title: "New survey"
   toCsvJson: ->
     columns = _.keys(@attributes)
     rowObjects = [@toJSON()]
