@@ -46,7 +46,7 @@ class XlfDetailView extends Backbone.View
 
 class XlfRowView extends Backbone.View
   tagName: "li"
-  className: "cl-fixed-row"
+  className: "page-header xlf-row-view"
   events:
    "click .create-new-list": "createListForRow"
    "click .edit-list": "editListForRow"
@@ -65,13 +65,22 @@ class XlfRowView extends Backbone.View
       @$el.addClass("xlf-selected")
   render: ->
     @$el.html """
-      <a href="#" class="delete-row" data-row-cid="#{@model.cid}" title="drc#{@model.cid}" txitle="This will remove the question from the survey">&times;</a>
-      <div class="post-row-buttons">-<button class="insert-row">+</button>-</div>
+      <div class="row-fluid clearfix">
+        <div class="col-xs-2 col-sm-1">
+          <div style="width:40px;height:40px;background-color:#ddd"></div>
+        </div>
+        <div class="col-xs-9 col-sm-10 row-content"></div>
+        <div class="col-xs-1 col-sm-1 row-r-buttons">
+          <div class="post-row-buttons">-<button class="insert-row">+</button>-</div>
+          <button type="button" class="close" aria-hidden="true">&times;</button>
+        </div>
+      </div>
     """
-    @$el.data("row-model-id", @model.cid)
+    @rowContent = @$(".row-content")
 
     for [key, val] in @model.attributesArray()
-      v = new XlfDetailView(model: val, rowView: @).renderInRowView(@)
+      new XlfDetailView(model: val, rowView: @).renderInRowView(@)
+
     @
   editListForRow: (evt)->
     @_ensureNoListViewsOpen()
@@ -109,7 +118,7 @@ class XlfRowView extends Backbone.View
     @$el.append $lvel
 
 class @SurveyApp extends Backbone.View
-  className: "formbuilder-wrap"
+  className: "formbuilder-wrap container"
   events:
     "click .delete-row": "clickRemoveRow"
     "click .insert-row": "clickInsertRow"
@@ -135,16 +144,24 @@ class @SurveyApp extends Backbone.View
     @survey.set("formName", @survey.settings.get("form_title"), silent: true)
 
     @$el.html """
-      <div class="stats">
+      <div class="page-header">
         <h1 class="title">
-          <span class="display-title">#{@survey.get("displayTitle")}</span>
-          <span class="form-name">##{@survey.get("formName")}</span>
+          <span class="display-title">
+            #{@survey.get("displayTitle")}
+          </span>
+          <span class="hashtag">[<span class="form-name">#{@survey.settings.get("form_title")}</span>]</span>
         </h1>
-        <h2 class="display-description">#{@survey.get("displayDescription")}</h2>
+        <p class="display-description">
+          #{@survey.get("displayDescription")}
+        </p>
       </div>
       <div class="form-editor-wrap">
         <ul class="-form-editor">
-          <li class="loading"><span>Loading...</span></li>
+          <li class="editor-message empty">
+            <strong>This survey is currently empty.</strong><br>
+            You can add questions, notes, prompts, or other fields by clicking
+            <span class="underline">+ Add question</span> below.
+          </li>
         </ul>
         <div class="trailing-buttons">
           <button id="add-question" class="attached"><span class="glyphicon-circle-plus"></span> Add question</button>
@@ -155,14 +172,19 @@ class @SurveyApp extends Backbone.View
     """
     @formEditorEl = @$(".-form-editor")
 
-    addOpts      = @$("#additional-options")
 
-    # watch for changes on the title and description
-    # $name = @$(".form-name")
-    # $displayTitle = @$(".display-title")
-    # $descrip = @$(".display-description")
+    # .form-name maps to settings.form_title
+    @$(".form-name").editInPlace
+      callback: (u, ent)=>
+        val = if ent then XLF.sluggify(ent) else ""
+        @survey.settings.set("form_title", val)
+        if val then val else "..."
 
-    # _formName = @survey.settings.get("form_title")
+    # .display-title maps to first line of settings.description
+    @$(".display-title").editInPlace
+      callback: (u, ent)=>
+        @survey.set("displayTitle", ent)
+        if ent then ent else "..."
 
     # $displayTitle.text(_displayTitle)
     # $descrip.text(_descrip.join("\n"))
@@ -198,19 +220,13 @@ class @SurveyApp extends Backbone.View
 
     @survey.rows.trigger("reset")
 
+    addOpts = @$("#additional-options")
     for detail in @survey.surveyDetails.models
       addOpts.append((new XlfSurveyDetailView(model: detail)).render().el)
+
     @
   reset: ->
     fe = @formEditorEl.empty()
-    if @survey.rows.models.length is 0
-      fe.html """
-        <li class="editor-message empty">
-          <strong>This survey is currently empty.</strong><br>
-          You can add questions, notes, prompts, or other fields by clicking
-          <span class="underline">+ Add question</span> below.
-        </li>
-      """
     @survey.forEachRow (row)=>
       # row._slideDown is for add/remove animation
       $el = new XlfRowView(model: row, surveyView: @).render().$el
@@ -230,7 +246,8 @@ class @SurveyApp extends Backbone.View
       if matchingRow
         @survey.rows.remove matchingRow
       # this slideUp is for add/remove row animation
-      rowEl.slideUp 175, "swing", ()=> @survey.rows.trigger "reset"
+      rowEl.slideUp 175, "swing", ()=>
+        @survey.rows.trigger "reset"
   clickInsertRow: (evt)->
     cid = $(evt.target).parents("li").eq(0).data("row-model-id")
     newIndex = @survey.rows.indexOf(@survey.rows.get(cid)) + 1
@@ -296,7 +313,7 @@ class XLF.ManageListView extends Backbone.View
     @row = @rowView.model
     @survey = @row._parent
     ``
-  className: "cl-fixed-row cf"
+  className: "manage-list-view col-md-4"
   events:
     "click .expand-list": "expandList"
   expandList: (evt)->
@@ -356,46 +373,74 @@ class XLF.ManageListView extends Backbone.View
         list.options = opts
         hideCl()
         row.trigger("change")
-    summ.hide()
-    exp.show()
     h2 = taVals.length * taLineH
     ta.animate({height: h2}, 275)
 
   render: ->
-    elHtml = ""
     numChoices = @survey.choices.models.length
     list = @row.getList()
     listName = @row.get("type").get("listName")
     editMode = @rowView.$el.find(".edit-list-view").length isnt 0
 
-    # aa_selectTypeBox = $("<div>", class: "select-type-box cl-span-2 cf").appendTo @$el
-    # aa_select = $("<select>")
-    # aa_selectTypeBox.html aa_select
-    # for [tlabel, tname] in XLF.lookupRowType.typeSelectList()
-    #   $("<option>", text: "#{tlabel}", value: tname).appendTo aa_select
-    bc_wrap = $("<div>", class: "bc-wrap cl-span-5 cf summarized").appendTo @$el
-    bc_wrap_hidden = $("<div>", class: "bc-wrap cl-span-5 cf expanded").hide().appendTo @$el
-    a_selectBox = $("<div>", class: "select-list-box float-left").appendTo bc_wrap
+    uid = _.uniqueId("list-select-")
 
-    c_nListsAvailable = $("<div>", class: "n-lists-available").appendTo bc_wrap
-    b_selectedListSummary = $("<div>", class: "selected-list-summary").appendTo bc_wrap
+    @$el.append """
+      <div class="form-group">
+        <label for="#{uid}">From list:</label>
+        <select id="#{uid}" class="form-control"></select>
+      </div>
+    <!--
+      <div class="row-fluid clearfix">
+        <div class="col-sm-4 form-group">
+          <div class="row-fluid">
+            <label class="control-label col-sm-5" for="#{uid}">
+              Select a list:
+            </label>
+            <div class="col-sm-7">
+              <select class="form-control" id="#{uid}"></select>
+            </div>
+          </div>
+        </div>
+      </div>
+      -->
+    """
+    select = @$el.find("select")
 
-    c_nListsAvailable.text "#{numChoices} list#{if numChoices is 1 then '' else 's'} available "
+    # bc_wrap = $("<div>", class: "bc-wrap cf summarized").appendTo @$el
+    # bc_wrap_hidden = $("<div>", class: "bc-wrap cf expanded").hide().appendTo @$el
+    # a_selectBox = $("<div>", class: "select-list-box").appendTo bc_wrap
+
+    # c_nListsAvailable = $("<div>", class: "n-lists-available").appendTo bc_wrap
+    # b_selectedListSummary = $("<div>", class: "selected-list-summary").appendTo bc_wrap
+
+    # c_nListsAvailable.text "#{numChoices} list#{if numChoices is 1 then '' else 's'} available "
 
 
     if list
+      table = $ """
+        <table class="table-hovered table-bordered" contenteditable="true">
+          <tr>
+            <th colspan="2">#{list.get("name")}</th>
+          </tr>
+        </table>
+      """
+      for opt, n in list.options.models
+        tr = $("<tr>").appendTo(table)
+        $("<td>").text(n+".").appendTo(tr)
+        $("<td>").text(opt.get("name")).appendTo(tr)
+      table.appendTo @$el
       opts = (opt.get("name")  for opt in list.options.models)
       optsStr = "#{opts.join(',')}"
       maxChars = 30
       if optsStr.length > maxChars
         optsStr = optsStr.slice(0,maxChars) + "..."
-      b_selectedListSummary.html "<a href='#' class='expand-list'>[ #{optsStr} ]</a>"
+      # b_selectedListSummary.html "<a href='#' class='expand-list'>[ #{optsStr} ]</a>"
     else
-      b_selectedListSummary.html "<em>No list selected</em>"
+      # b_selectedListSummary.html "<em>No list selected</em>"
 
     if numChoices is 0
       sel = $("<select>", {disabled: 'disabled'}).html($("<option>", text: "No lists available"))
-      a_selectBox.html sel
+      # a_selectBox.html sel
     else
       sel = $("<select>")
       unless list
@@ -415,8 +460,8 @@ class XLF.ManageListView extends Backbone.View
       sel.change (evt)=>
         nextList = @survey.choices.get $(evt.target).val()
         @row.get("type").set("list", nextList)
-      a_selectBox.html sel
-    c_nListsAvailable.append """<button class='create-new-list2'>(+) Create new list</button>"""
+      # a_selectBox.html sel
+    # c_nListsAvailable.append """<button class='create-new-list2'>(+) Create new list</button>"""
     @
 
 class XLF.EditListView extends Backbone.View
