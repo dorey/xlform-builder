@@ -251,3 +251,25 @@ CENSUS_SURVEY = """
   ,"form_title","form_id"
   ,"Census Questions (2010)","census2010"
   """
+
+describe "testing the view", ->
+
+  it "builds the view", ->
+    pizza = XLF.createSurveyFromCsv(PIZZA_SURVEY)
+    @xlv = new SurveyApp survey: pizza
+    div = $("<div>").appendTo("body")
+    $el = @xlv.render().$el
+    $el.appendTo(div)
+
+    expect(div.html()).not.toContain("empty")
+    expect(div.find("li.xlf-row-view").length).toBe(2)
+
+    clickNewRow = ()->
+      div.find("button#add-question").click()
+    expect(clickNewRow).not.toThrow()
+
+    # expect(div.find("li.xlf-row-view").length).toBe(2)
+
+    # finalRow = div.find("li.xlf-row-view").eq(-1)
+    # expect(finalRow.find(".xlf-dv-label").length).toBe(1)
+    # expect(finalRow.find(".xlf-dv-label blockquote").length).toBe(1)
