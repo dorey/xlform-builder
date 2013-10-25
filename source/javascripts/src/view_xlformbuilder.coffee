@@ -126,22 +126,32 @@ class @SurveyApp extends Backbone.View
     "click #publish-survey": "publishButtonClick"
 
   initialize: (options)->
-    @survey = new XLF.Survey(options)
+    if options.survey and (options.survey instanceof XLF.Survey)
+      @survey = options.survey
+    else
+      @survey = new XLF.Survey(options)
 
-    @survey.rows.on "add", @reset, @
-    @survey.rows.on "reset", @reset, @
-    @survey.on "change", @reset, @
+    @rowViews = new Backbone.Model()
+    description = @survey.settings.get("description") || ""
+    [_displayTitle, _descrip...] = description.split("\\n")
+    _displayTitle || (_displayTitle = @survey.settings.get("form_title"))
+    _descrip || (_descrip = "")
+    @survey.set("displayTitle", _displayTitle, silent: true)
+    @survey.set("displayDescription", _descrip.join("\n"), silent: true)
+    @survey.set("formName", @survey.settings.get("form_title"), silent: true)
+    @survey.on "change:displayTitle", ()=>
+      lines = [@survey.get("displayTitle"), @survey.get("displayDescription")]
+      @survey.settings.set "description", lines.join("\n")
+
+    # @survey.rows.on "add", @reset, @
+    # @survey.rows.on "reset", @reset, @
+    # @survey.on "change", @softReset, @
 
     @onPublish = options.publish || $.noop
     $(window).on "keydown", (evt)=>
       @onEscapeKeydown(evt)  if evt.keyCode is 27
 
   render: ()->
-    description = @survey.settings.get("description")
-    [_displayTitle, _descrip...] = description.split("\\n")
-    @survey.set("displayTitle", _displayTitle, silent: true)
-    @survey.set("displayDescription", _descrip.join("\n"), silent: true)
-    @survey.set("formName", @survey.settings.get("form_title"), silent: true)
 
     @$el.html """
       <div class="page-header">
@@ -186,45 +196,42 @@ class @SurveyApp extends Backbone.View
         @survey.set("displayTitle", ent)
         if ent then ent else "..."
 
-    # $displayTitle.text(_displayTitle)
-    # $descrip.text(_descrip.join("\n"))
-    # $name.text("##{_formName}")
-
-    # do =>
-    #   setting = "form_title"
-    #   elem = @$(".#{setting}")
-    #   if (es = @survey.settings.get(setting))
-    #     elem.html es 
-    #   eip =
-    #     default_text: "New survey"
-    #     callback: (u, ent)=>
-    #       @survey.settings.set setting, ent
-    #       ent
-    #   elem.editInPlace eip
-    # do =>
-    #   setting = "description"
-    #   elem = @$(".description")
-    #   default_text = "[survey description]"
-    #   if (es = @survey.settings.get(setting))
-    #     elem.html es
-    #   eip =
-    #     save_if_nothing_changed: true
-    #     default_text: default_text
-    #     callback: (u, ent)=>
-    #       if ent is ""
-    #         default_text
-    #       else
-    #         @survey.settings.set setting, ent
-    #         ent
-    #   elem.editInPlace eip
-
-    @survey.rows.trigger("reset")
+    #.display-description maps to remaining lines of settings.description
+    @$(".display-description").editInPlace
+      field_type: "textarea"
+      textarea_cols: 50
+      textarea_rows: 3
+      callback: (u, ent)=>
+        @survey.set("displayDescription", ent)
+        if ent then ent.replace(/\n/g, "<br>") else "..."
 
     addOpts = @$("#additional-options")
     for detail in @survey.surveyDetails.models
       addOpts.append((new XlfSurveyDetailView(model: detail)).render().el)
 
+    @softReset()
     @
+  softReset: ->
+    fe = @formEditorEl
+    isEmpty = true
+    @survey.forEachRow (row)=>
+      isEmpty = false
+      unless (xlfrv = @rowViews.get(row.cid))
+        @rowViews.set(row.cid, new XlfRowView(model: row, surveyView: @))
+        xlfrv = @rowViews.get(row.cid)
+
+      $el = xlfrv.render().$el
+      if $el.parents(@$el).length is 0
+        @formEditorEl.append($el)
+      # if row._slideDown
+      #   row._slideDown = false
+      #   fe.append($el.hide())
+      #   $el.slideDown 175
+      # else
+      #   fe.append($el)
+    unless isEmpty
+      @formEditorEl.find(".empty").remove()
+
   reset: ->
     fe = @formEditorEl.empty()
     @survey.forEachRow (row)=>
