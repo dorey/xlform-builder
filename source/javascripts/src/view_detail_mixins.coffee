@@ -20,7 +20,7 @@
         textarea_cols: 50
         textarea_rows: 3
         callback: (uu, ent)=>
-          @model.set("value", ent) that is bothering me
+          @model.set("value", ent)
           if ent is "" then "..." else ent
 
   VX.hint =
