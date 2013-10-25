@@ -52,10 +52,10 @@ class XlfRowView extends Backbone.View
    "click .edit-list": "editListForRow"
    "click": "select"
   initialize: ()->
-    @model.on "change", @render, @
     typeDetail = @model.get("type")
-    typeDetail.on "change:value", _.bind(@render, @)
-    typeDetail.on "change:listName", _.bind(@render, @)
+    # @model.on "change", @render, @
+    # typeDetail.on "change:value", _.bind(@render, @)
+    # typeDetail.on "change:listName", _.bind(@render, @)
     @surveyView = @options.surveyView
     @$el.on "xlf-blur", =>
       @$el.removeClass("xlf-selected")
