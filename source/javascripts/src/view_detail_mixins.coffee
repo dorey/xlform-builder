@@ -10,8 +10,8 @@
         </blockquote>
       </div>
       """
-    insertInDOM: (rowView$el)->
-      rowView$el.find(".row-content").eq(0).prepend(@$el)
+    insertInDOM: (rowView)->
+      rowView.$el.find(".row-content").eq(0).prepend(@$el)
 
     afterRender: ->
       @$el.find("blockquote").eq(0).editInPlace
