@@ -24,13 +24,16 @@ sampleForms = {}
     identifier = uniqueId
 
   button = $ """
-  <button data-clicks="launch-builder">
+  <button data-clicks="launch-builder" type="button" class="btn btn-sm btn-default">
     #{formName}
   </button>
   """
   sampleForms[identifier] = button
   button.click (evt)->
     evt.preventDefault()
+    $et = $(evt.target)
+    $et.siblings(".btn-primary").removeClass("btn-primary")
+    $et.addClass("btn-primary")
     window.location.hash = identifier
     sheetToObjects = (sheetName)->
       if (sht = cobj.sheet sheetName) then sht.toObjects() else []
