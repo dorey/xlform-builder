@@ -262,14 +262,14 @@ describe "testing the view", ->
     $el.appendTo(div)
 
     expect(div.html()).not.toContain("empty")
-    expect(div.find("li.xlf-row-view").length).toBe(2)
+    expect(div.find("li.xlf-row-view").length).toBe(1)
 
     clickNewRow = ()->
       div.find("button#add-question").click()
     expect(clickNewRow).not.toThrow()
 
-    # expect(div.find("li.xlf-row-view").length).toBe(2)
+    expect(div.find("li.xlf-row-view").length).toBe(2)
 
-    # finalRow = div.find("li.xlf-row-view").eq(-1)
-    # expect(finalRow.find(".xlf-dv-label").length).toBe(1)
-    # expect(finalRow.find(".xlf-dv-label blockquote").length).toBe(1)
+    finalRow = div.find("li.xlf-row-view").eq(0)
+    expect(finalRow.find(".xlf-dv-label").length).toBe(1)
+    expect(finalRow.find(".xlf-dv-label blockquote").length).toBe(1)
