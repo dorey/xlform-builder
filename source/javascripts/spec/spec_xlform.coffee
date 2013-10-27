@@ -34,6 +34,39 @@ describe "xlform survey model (XLF.Survey)", ->
         expect(@pizzaSurvey.choices.length).toBe(2)
         x2 = @pizzaSurvey.toCsvJson()
         expect(x1).toEqual(x2)
+      it "can add row to a specific index", ->
+        expect(@pizzaSurvey.addRowAtIndex).toBeDefined()
+        # last question
+        rowc = @pizzaSurvey.rows.length
+        expect(@pizzaSurvey.rows.length).toBe 1
+        @pizzaSurvey.addRowAtIndex({
+          name: "lastrow",
+          label: "last row",
+          type: "text"
+          }, rowc)
+        expect(@pizzaSurvey.rows.length).toBe 2
+        expect(@pizzaSurvey.rows.last().get("label").get("value")).toBe("last row")
+
+        @pizzaSurvey.addRowAtIndex({
+          name: "firstrow",
+          label: "first row",
+          type: "note"
+          }, 0)
+
+        expect(@pizzaSurvey.rows.length).toBe 3
+        expect(@pizzaSurvey.rows.first().get("label").get("value")).toBe("first row")
+
+        @pizzaSurvey.addRowAtIndex({
+          name: "secondrow",
+          label: "second row",
+          type: "note"
+          }, 1)
+
+        expect(@pizzaSurvey.rows.length).toBe 4
+        expect(@pizzaSurvey.rows.at(1).get("label").get("value")).toBe("second row")
+
+        labels = _.map @pizzaSurvey.rows.pluck("label"), (i)-> i.get("value")
+        expect(labels).toEqual([ 'first row', 'second row', 'Do you like pizza?', 'last row' ])
 
     it "row types changing is trackable", ->
       expect(@firstRow.getValue("type")).toBe("select_one yes_no")

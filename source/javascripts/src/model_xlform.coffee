@@ -42,6 +42,9 @@ class SurveyFragment extends BaseModel
   addRow: (r)->
     r._parent = @
     @rows.add r
+  addRowAtIndex: (r, index)->
+    r._parent = @
+    @rows.add r, at: index
 
 ###
 XLF...
