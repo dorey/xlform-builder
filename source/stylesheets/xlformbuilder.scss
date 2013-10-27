@@ -34,6 +34,36 @@
     font-family: "Courier New", monospace;
   }
 }
+
+button.xlfrow-cog {
+  float: right;
+  font-size: 21px;
+  font-weight: bold;
+  line-height: 1;
+  margin: -2px 12px 0 0;
+  color: #000000;
+  text-shadow: 0 1px 0 #ffffff;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+  &:hover, &:focus {
+    color: #000000;
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+  }
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  -webkit-appearance: none;
+}
+.row-extras {
+  border: 1px dotted #ddd;
+  border-radius: 6px;
+  background-color: #f8f8f8;
+}
+
 // .cl-fixed-row {
 //   margin-left: -15px;
 
@@ -200,6 +230,67 @@
     text-decoration: underline;
   }
 }
+.xlf-row-view {
+
+}
+.expanding-spacer-between-rows {
+  position: relative;
+  // background-color: rgba(255,0,0,0.2);
+  // * {
+  //   background-color: rgba(0,255,0,0.2);
+  // }
+  .add-row-btn {
+    color: #888;
+    font-size: 11px;
+    width: 360px;
+    z-index: 99;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    margin-left: -180px;
+    height: 16px;
+    line-height: 13px;
+    top: 6px;
+
+    &:hover {
+      color: #888;
+    }
+  }
+  .line {
+    margin-top: 14px;
+    height: 0;
+    border: 1px solid #ccc;
+    border-width: 1px 0 0 0;
+    z-index: 1;
+    &.expanded {
+      border-width: 1px 0;
+      height: inherit;
+    }
+  }
+  $mrWidth: 65px;
+  .menu-row {
+    // width: $mrWidth;
+    // height: $mrWidth;
+    // float: left;
+    // margin-left: 12px;
+    // border: 1px solid red;
+    // box-sizing: border-box;
+  }
+  .menu-item {
+    height: $mrWidth;
+    line-height: $mrWidth;
+    text-align: center;
+    font-size: 11px;
+    cursor: pointer;
+    &:hover {
+      background-color: #999;
+    }
+  }
+}
+
+#test-wrap {
+  background-color: #fff;
+}
 
 // .row-details {
 //   margin: 4px 0 -2px 0;
@@ -307,34 +398,16 @@ div.trailing-buttons {
     color: #666;
   }
 
+  .type-icon {
+    height: 40px;
+    width: 40px;
+    background-color: #bbb;
+  }
+
   /* Using ".post-row-buttons"
      so that we can have an easy way to add questions
      into the middle of the list */
-  li {
-    .post-row-buttons {
-      height: 18px;
-      width: 100%;
-      position: absolute;
-      bottom: -9px;
-      text-align: right;
-      z-index: 999;
-      color: #bbb;
 
-      button {
-        line-height: 12px;
-        font-size: 12px;
-        font-weight: bold;
-        opacity: 0.4;
-
-        &:hover {
-          opacity: 1;
-        }
-      }
-    }
-  }
-  li:last-child .post-row-buttons {
-    display: none;
-  }
   .stats {
     // background-color: #f0f0f0;
     // border: 1px solid #666;

@@ -36,7 +36,7 @@ class XlfDetailView extends Backbone.View
     <code>#{@model.get("value")}</code>
     """
   insertInDOM: (rowView)->
-    rowView.$el.append(@el)
+    rowView.rowExtras.append(@el)
 
   renderInRowView: (rowView)->
     @render()
@@ -44,15 +44,70 @@ class XlfDetailView extends Backbone.View
     @insertInDOM(rowView)
     @
 
+class XlfRowSelector extends Backbone.View
+  events:
+    "click .shrink": "shrink"
+    "click .menu-item": "selectMenuItem"
+  initialize: (opts)->
+    @button = @$el.find(".btn")
+    @line = @$el.find(".line")
+    if opts.action is "click-add-row"
+      @expand()
+  expand: ->
+    @button.fadeOut 150
+    @line.addClass "expanded"
+    @line.css "height", "inherit"
+    @line.html """
+      <div class="iwrap">
+        <div class="well row-fluid clearfix">
+          <button type="button" class="shrink pull-right close" aria-hidden="true">&times;</button>
+          <h4>Please select a type for the new question</h4>
+        </div>
+      </div>
+      """
+    $menu = @line.find(".well")
+    mItems = [["geopoint"],
+      ["image", "audio", "video", "barcode"],
+      ["date", "datetime"],
+      ["text", "integer", "decimal", "note"],
+      ["unk", "ellipse"],
+      ["select_one", "select_multiple"]]
+    for mrow in mItems
+      menurow = $("<div>", class: "menu-row col-md-1").appendTo $menu
+      for mcell, i in mrow
+        menurow.append """<div class="menu-item menu-item-#{mcell}" data-menu-item="#{mcell}">#{mcell}</div>"""
+        ``
+      ``
+    ``
+  shrink: ->
+    @line.find("div").eq(0).fadeOut 250, =>
+      @line.empty()
+    @button.fadeIn 200
+    @line.removeClass "expanded"
+    @line.animate height: "0"
+  hide: ->
+    @button.show()
+    @line.empty().removeClass("expanded").css "height": 0
+  selectMenuItem: (evt)->
+    mi = $(evt.target).data("menuItem")
+    rowBefore = @options.spawnedFromView.model
+    survey = rowBefore._parent
+    rowBeforeIndex = survey.rows.indexOf(rowBefore)
+    survey.addRowAtIndex({type: mi}, rowBeforeIndex+1)
+    @hide()
+
 class XlfRowView extends Backbone.View
   tagName: "li"
-  className: "page-header xlf-row-view"
+  className: "xlf-row-view"
   events:
    "click .create-new-list": "createListForRow"
    "click .edit-list": "editListForRow"
    "click": "select"
+   "click .add-row-btn": "expandRowSelector"
+   "click .xlfrow-cog": "expandCog"
   initialize: ()->
     typeDetail = @model.get("type")
+    @$el.attr("data-row-id", @model.cid)
     # @model.on "change", @render, @
     # typeDetail.on "change:value", _.bind(@render, @)
     # typeDetail.on "change:listName", _.bind(@render, @)
@@ -63,20 +118,27 @@ class XlfRowView extends Backbone.View
     unless @$el.hasClass("xlf-selected")
       $(".xlf-selected").trigger("xlf-blur")
       @$el.addClass("xlf-selected")
+  expandRowSelector: ->
+    new XlfRowSelector(el: @$el.find(".expanding-spacer-between-rows").get(0), action: "click-add-row", spawnedFromView: @)
   render: ->
     @$el.html """
       <div class="row-fluid clearfix">
-        <div class="col-xs-2 col-sm-1">
-          <div style="width:40px;height:40px;background-color:#ddd"></div>
+        <div class="col-xs-2 col-sm-1 row-type">
         </div>
         <div class="col-xs-9 col-sm-10 row-content"></div>
         <div class="col-xs-1 col-sm-1 row-r-buttons">
-          <div class="post-row-buttons">-<button class="insert-row">+</button>-</div>
-          <button type="button" class="close" aria-hidden="true">&times;</button>
+          <button type="button" class="close delete-row" aria-hidden="true">&times;</button>
+          <button type="button" class="xlfrow-cog" aria-hidden="true"><span class="glyphicon glyphicon-cog"></span></button>
         </div>
+        <div class="col-md-offset-1 col-xs-9 col-sm-10 row-extras hidden row-fluid"></div>
+      </div>
+      <div class="row clearfix expanding-spacer-between-rows">
+        <div class="add-row-btn btn btn-xs btn-default">+</div>
+        <div class="line">&nbsp;</div>
       </div>
     """
     @rowContent = @$(".row-content")
+    @rowExtras = @$(".row-extras")
 
     for [key, val] in @model.attributesArray()
       new XlfDetailView(model: val, rowView: @).renderInRowView(@)
@@ -116,13 +178,13 @@ class XlfRowView extends Backbone.View
     lv = new XLF.EditListView(choiceList: new XLF.ChoiceList(), survey: @model._parent, rowView: @)
     $lvel = lv.render().$el.css @$(".select-list").position()
     @$el.append $lvel
+  expandCog: ()->
+    @rowExtras.toggleClass("hidden")
 
 class @SurveyApp extends Backbone.View
   className: "formbuilder-wrap container"
   events:
     "click .delete-row": "clickRemoveRow"
-    "click .insert-row": "clickInsertRow"
-    "click #add-question": "addNewRow"
     "click #publish-survey": "publishButtonClick"
 
   initialize: (options)->
@@ -143,7 +205,7 @@ class @SurveyApp extends Backbone.View
       lines = [@survey.get("displayTitle"), @survey.get("displayDescription")]
       @survey.settings.set "description", lines.join("\n")
 
-    # @survey.rows.on "add", @reset, @
+    @survey.rows.on "add", @softReset, @
     # @survey.rows.on "reset", @reset, @
     # @survey.on "change", @softReset, @
 
@@ -154,17 +216,16 @@ class @SurveyApp extends Backbone.View
   render: ()->
 
     @$el.html """
-      <div class="page-header">
-        <h1 class="title">
-          <span class="display-title">
-            #{@survey.get("displayTitle")}
-          </span>
-          <span class="hashtag">[<span class="form-name">#{@survey.settings.get("form_title")}</span>]</span>
-        </h1>
-        <p class="display-description">
-          #{@survey.get("displayDescription")}
-        </p>
-      </div>
+      <h1 class="title">
+        <span class="display-title">
+          #{@survey.get("displayTitle")}
+        </span>
+        <span class="hashtag">[<span class="form-name">#{@survey.settings.get("form_title")}</span>]</span>
+      </h1>
+      <p class="display-description">
+        #{@survey.get("displayDescription")}
+      </p>
+      <div class="stats row-details" id="additional-options">&nbsp;</div>
       <div class="form-editor-wrap">
         <ul class="-form-editor">
           <li class="editor-message empty">
@@ -178,7 +239,6 @@ class @SurveyApp extends Backbone.View
           <button id="publish-survey">Preview</button>
         </div>
       </div>
-      <div class="stats row-details" id="additional-options">&nbsp;</div>
     """
     @formEditorEl = @$(".-form-editor")
 
@@ -255,18 +315,19 @@ class @SurveyApp extends Backbone.View
       # this slideUp is for add/remove row animation
       rowEl.slideUp 175, "swing", ()=>
         @survey.rows.trigger "reset"
-  clickInsertRow: (evt)->
-    cid = $(evt.target).parents("li").eq(0).data("row-model-id")
-    newIndex = @survey.rows.indexOf(@survey.rows.get(cid)) + 1
-    @addRowAtIndex({_parent: @survey}, newIndex)
-  addNewRow: (evt)->
-    @addRowAtIndex(_parent: @survey)
-  addRowAtIndex: (opts={}, atIndex=false)->
-    atIndex = @survey.rows.length  if atIndex is false
-    # row._slideDown is for add/remove animation
-    nRow = new XLF.Row(opts)
-    nRow._slideDown = true
-    @survey.rows.add(nRow, at: atIndex)
+  ensureAllRowsDrawn: ->
+    prev = false
+    @survey.forEachRow (row)=>
+      prevMatch = @formEditorEl.find(".xlf-row-view[data-row-id='#{row.cid}']").eq(0)
+      if prevMatch.length isnt 0
+        prev = prevMatch
+      else
+        $el = new XlfRowView(model: row, surveyView: @).render().$el
+        if prev
+          prev.after($el)
+        else
+          @formEditorEl.prepend($el)
+
   onEscapeKeydown: -> #noop. to be overridden
   publishButtonClick: (evt)->
     @onPublish.call(@, arguments)
