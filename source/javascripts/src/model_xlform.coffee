@@ -58,6 +58,7 @@ class XLF.Survey extends SurveyFragment
     if (sname = @settings.get("name"))
       @set("name", sname)
     @newRowDetails = options.newRowDetails || XLF.newRowDetails
+    @defaultsForType = options.defaultsForType || XLF.defaultsForType
     @surveyDetails = new XLF.SurveyDetails(_.values(XLF.defaultSurveyDetails))
     passedChoices = options.choices || []
     @choices = do ->
@@ -191,12 +192,21 @@ class XLF.Row extends BaseModel
           needs to keep track of how the value was built
     ###
     if @_parent
-      defaultsUnlessDefined = @_parent.newRowDetails
+      defaultsUnlessDefined = @_parent.newRowDetails || XLF.newRowDetails
+      defaultsForType = @_parent.defaultsForType || XLF.defaultsForType
     else
       console?.error "Row not linked to parent survey."
       defaultsUnlessDefined = XLF.newRowDetails
+      defaultsForType = XLF.defaultsForType
 
-    for key, vals of defaultsUnlessDefined
+    if @attributes.type and @attributes.type of defaultsForType
+      curTypeDefaults = defaultsForType[@attributes.type]
+    else
+      curTypeDefaults = {}
+
+    defaults = _.extend {}, defaultsUnlessDefined, curTypeDefaults
+
+    for key, vals of defaults
       unless key of @attributes
         newVals = {}
         for vk, vv of vals
@@ -505,3 +515,22 @@ XLF.newRowDetails =
   required:
     value: false
     _hideUnlessChanged: true
+
+XLF.defaultsForType =
+  geopoint:
+    label:
+      value: "Record your current location"
+  image:
+    label:
+      value: "Point and shoot! Take a photo with the phone's camera."
+  integer:
+    label:
+      value: "Enter a number"
+      _promptToChangeDefault: true
+  date:
+    label:
+      value: "Enter a date"
+  datetime:
+    label:
+      value: "Enter a date and time"
+
