@@ -297,12 +297,18 @@ describe "testing the view", ->
     expect(div.html()).not.toContain("empty")
     expect(div.find("li.xlf-row-view").length).toBe(1)
 
+    lastRowEl = div.find("li.xlf-row-view").eq(0)
+
+    # adds row selector
     clickNewRow = ()->
-      div.find("button#add-question").click()
+      lastRowEl.find(".add-row-btn").click()
+
     expect(clickNewRow).not.toThrow()
+    expect(lastRowEl.find(".line").eq(-1).hasClass("expanded")).toBeTruthy()
 
-    expect(div.find("li.xlf-row-view").length).toBe(2)
+    expect(pizza.rows.length).toBe(1)
 
-    finalRow = div.find("li.xlf-row-view").eq(0)
-    expect(finalRow.find(".xlf-dv-label").length).toBe(1)
-    expect(finalRow.find(".xlf-dv-label blockquote").length).toBe(1)
+    lastRowEl.find(".line.expanded").find(".menu-item-geopoint").trigger("click")
+    expect(pizza.rows.length).toBe(2)
+    expect(div.find(".xlf-row-view").length).toBe(2)
+    expect(div.find(".xlf-row-view").eq(-1).find(".xlf-dv-label").text()).toMatch("location")
