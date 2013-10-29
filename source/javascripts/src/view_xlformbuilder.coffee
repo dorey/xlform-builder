@@ -128,9 +128,15 @@ class XlfRowView extends Backbone.View
         <div class="col-xs-9 col-sm-10 row-content"></div>
         <div class="col-xs-1 col-sm-1 row-r-buttons">
           <button type="button" class="close delete-row" aria-hidden="true">&times;</button>
-          <button type="button" class="xlfrow-cog" aria-hidden="true"><span class="glyphicon glyphicon-cog"></span></button>
         </div>
-        <div class="col-md-offset-1 col-xs-9 col-sm-10 row-extras hidden row-fluid"></div>
+      </div>
+      <div class="row-fluid clearfix">
+        <div class="col-xs-1">
+          <button type="button" class="xlfrow-cog" aria-hidden="true">
+            <span class="glyphicon glyphicon-cog"></span>
+          </button>
+        </div>
+        <div class="col-xs-9 col-sm-10 row-extras hidden row-fluid"></div>
       </div>
       <div class="row clearfix expanding-spacer-between-rows">
         <div class="add-row-btn btn btn-xs btn-default">+</div>
@@ -139,7 +145,7 @@ class XlfRowView extends Backbone.View
     """
     @rowContent = @$(".row-content")
     @rowExtras = @$(".row-extras")
-
+    @cogButton = @$(".xlfrow-cog")
     for [key, val] in @model.attributesArray()
       new XlfDetailView(model: val, rowView: @).renderInRowView(@)
 
@@ -179,6 +185,7 @@ class XlfRowView extends Backbone.View
     $lvel = lv.render().$el.css @$(".select-list").position()
     @$el.append $lvel
   expandCog: ()->
+    @cogButton.toggleClass("active")
     @rowExtras.toggleClass("hidden")
 
 class @SurveyApp extends Backbone.View
@@ -235,7 +242,6 @@ class @SurveyApp extends Backbone.View
           </li>
         </ul>
         <div class="trailing-buttons">
-          <button id="add-question" class="attached"><span class="glyphicon-circle-plus"></span> Add question</button>
           <button id="publish-survey">Preview</button>
         </div>
       </div>

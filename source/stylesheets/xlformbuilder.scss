@@ -40,11 +40,15 @@ button.xlfrow-cog {
   font-size: 21px;
   font-weight: bold;
   line-height: 1;
-  margin: -2px 12px 0 0;
+  margin: -6px -9px 0 0;
   color: #000000;
   text-shadow: 0 1px 0 #ffffff;
   opacity: 0.2;
   filter: alpha(opacity=20);
+  &.active {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+  }
   &:hover, &:focus {
     color: #000000;
     text-decoration: none;
@@ -186,7 +190,7 @@ button.xlfrow-cog {
     li {
       position: relative;
       margin: 0;
-      padding: 0;
+      padding: 12px 0 0 0;
       // border-bottom: 1px solid #ddd;
       // opacity: 0.8;
       // &.xlf-selected {
@@ -240,13 +244,13 @@ button.xlfrow-cog {
   //   background-color: rgba(0,255,0,0.2);
   // }
   .add-row-btn {
+    background-color: #fff;
     color: #888;
     font-size: 11px;
     width: 360px;
     z-index: 99;
     position: absolute;
     left: 50%;
-    top: 0;
     margin-left: -180px;
     height: 16px;
     line-height: 13px;
@@ -254,6 +258,11 @@ button.xlfrow-cog {
 
     &:hover {
       color: #888;
+      background-color: #fff;
+      height: 18px;
+      top: 5px;
+      line-height: 16px;
+      font-weight: bold;
     }
   }
   .line {
