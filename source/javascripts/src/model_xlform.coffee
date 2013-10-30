@@ -522,11 +522,23 @@ XLF.defaultsForType =
       value: "Record your current location"
   image:
     label:
-      value: "Point and shoot! Take a photo with the phone's camera."
+      value: "Point and shoot! Use the camera to take a photo"
+  video:
+    label:
+      value: "Use the camera to record a video"
+  audio:
+    label:
+      value: "Use the camera to record a sound"
+  note:
+    label:
+      value: "This note can be read out loud"
   integer:
     label:
       value: "Enter a number"
       _promptToChangeDefault: true
+  decimal:
+    label:
+      value: "Enter a number"
   date:
     label:
       value: "Enter a date"

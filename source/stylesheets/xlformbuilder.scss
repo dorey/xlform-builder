@@ -321,11 +321,14 @@ button.xlfrow-cog {
     font-size: 11px;
     cursor: pointer;
     opacity: 0.7;
+    color: transparent;
+    background-size: 63px 63px;
+    border-radius: 4px;
+
     &:hover {
       opacity: 0.9;
       background-color: #bbb;
     }
-    background-size: 63px 63px;
     &.menu-item-text {
       background-image: url('../images/type-icons/text.png');
     }
@@ -359,7 +362,6 @@ button.xlfrow-cog {
     &.menu-item-image {
       background-image: url('../images/type-icons/image.png');
     }
-
   }
 }
 .sortable-active {
@@ -501,8 +503,14 @@ div.trailing-buttons {
   &.rt-video {
     background-image: url('../images/type-icons/video.png');
   }
-  &.rt-photo {
+  &.rt-image {
     background-image: url('../images/type-icons/image.png');
+  }
+  &.rt-select_one {
+    background-image: url('../images/type-icons/select.png');
+  }
+  &.rt-select_multiple {
+    background-image: url('../images/type-icons/select.png');
   }
 }
 .formbuilder-wrap {

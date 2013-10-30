@@ -70,15 +70,13 @@ class XlfRowSelector extends Backbone.View
       ["image", "audio", "video", "barcode"],
       ["date", "datetime"],
       ["text", "integer", "decimal", "note"],
-      ["unk", "ellipse"],
+      # ["unk", "ellipse"],
       ["select_one", "select_multiple"]]
     for mrow in mItems
       menurow = $("<div>", class: "menu-row col-md-1").appendTo $menu
       for mcell, i in mrow
         menurow.append """<div class="menu-item menu-item-#{mcell}" data-menu-item="#{mcell}">#{mcell}</div>"""
-        ``
-      ``
-    ``
+
   shrink: ->
     @line.find("div").eq(0).fadeOut 250, =>
       @line.empty()
