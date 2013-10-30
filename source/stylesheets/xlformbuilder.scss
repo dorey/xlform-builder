@@ -320,9 +320,48 @@ button.xlfrow-cog {
     text-align: center;
     font-size: 11px;
     cursor: pointer;
+    opacity: 0.7;
     &:hover {
-      background-color: #999;
+      opacity: 0.9;
+      background-color: #bbb;
     }
+    background-size: 63px 63px;
+    &.menu-item-text {
+      background-image: url('../images/type-icons/text.png');
+    }
+    &.menu-item-audio {
+      background-image: url('../images/type-icons/audio.png');
+    }
+    &.menu-item-barcode {
+      background-image: url('../images/type-icons/barcode.png');
+    }
+    &.menu-item-datetime {
+      background-image: url('../images/type-icons/datetime.png');
+    }
+    &.menu-item-date {
+      background-image: url('../images/type-icons/date.png');
+    }
+    &.menu-item-decimal {
+      background-image: url('../images/type-icons/decimal.png');
+    }
+    &.menu-item-geopoint {
+      background-image: url('../images/type-icons/geopoint.png');
+    }
+    &.menu-item-integer {
+      background-image: url('../images/type-icons/integer.png');
+    }
+    &.menu-item-note {
+      background-image: url('../images/type-icons/note.png');
+    }
+    &.menu-item-video {
+      background-image: url('../images/type-icons/video.png');
+    }
+    &.menu-item-image {
+      background-image: url('../images/type-icons/image.png');
+    }
+
+  }
+}
 .sortable-active {
   background-color: #fafafa;
   border: 1px solid #bbb;
@@ -427,6 +466,45 @@ div.trailing-buttons {
   }
 }
 
+.type-icon {
+  height: 40px;
+  width: 40px;
+  background-size: 40px 40px;
+  opacity: 0.4;
+  &.rt-text {
+    background-image: url('../images/type-icons/text.png');
+  }
+  &.rt-audio {
+    background-image: url('../images/type-icons/audio.png');
+  }
+  &.rt-barcode {
+    background-image: url('../images/type-icons/barcode.png');
+  }
+  &.rt-datetime {
+    background-image: url('../images/type-icons/datetime.png');
+  }
+  &.rt-date {
+    background-image: url('../images/type-icons/date.png');
+  }
+  &.rt-decimal {
+    background-image: url('../images/type-icons/decimal.png');
+  }
+  &.rt-geopoint {
+    background-image: url('../images/type-icons/geopoint.png');
+  }
+  &.rt-integer {
+    background-image: url('../images/type-icons/integer.png');
+  }
+  &.rt-note {
+    background-image: url('../images/type-icons/note.png');
+  }
+  &.rt-video {
+    background-image: url('../images/type-icons/video.png');
+  }
+  &.rt-photo {
+    background-image: url('../images/type-icons/image.png');
+  }
+}
 .formbuilder-wrap {
   // width: 796px;
   // border: 1px solid #bbb;
