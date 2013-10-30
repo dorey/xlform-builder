@@ -35,6 +35,23 @@
   }
 }
 
+blockquote {
+  font-size: 18px;
+  font-weight: 600;
+  color: #666;
+}
+.placeholder {
+  height: 110px;
+  background-image: url('../images/construction_paper.png');
+}
+#additional-options {
+
+}
+.survey-detail {
+  float: left;
+  padding: 4px 12px 4px 0;
+}
+
 button.xlfrow-cog {
   float: right;
   font-size: 21px;
@@ -66,6 +83,19 @@ button.xlfrow-cog {
   border: 1px dotted #ddd;
   border-radius: 6px;
   background-color: #f8f8f8;
+  .dt-view {
+    margin-left: 24px;
+  }
+}
+.row-extras-summary {
+  color: #aaa;
+  font-style: italic;
+  border-radius: 6px;
+  border: 1px dotted transparent;
+  &:hover {
+    background-color: #fafafa;
+    border-color: #ddd;
+  }
 }
 
 // .cl-fixed-row {
@@ -173,7 +203,10 @@ button.xlfrow-cog {
     clear: both;
   }
 }
-
+.row-type-col {
+  width: 4.1666%;
+  float: left;
+}
 .form-editor-wrap {
   color: rgb(50, 53, 70);
   label {
@@ -181,10 +214,9 @@ button.xlfrow-cog {
   }
 
   ul.-form-editor {
+    font-family: 'Open Sans', sans-serif;
     margin: 0px;
     padding: 0px;
-    // border-radius: 4px;
-    // border: 1px solid #bbb;
     list-style-type: none;
     min-height: 62px;
     li {
@@ -239,10 +271,7 @@ button.xlfrow-cog {
 }
 .expanding-spacer-between-rows {
   position: relative;
-  // background-color: rgba(255,0,0,0.2);
-  // * {
-  //   background-color: rgba(0,255,0,0.2);
-  // }
+  margin: 0;
   .add-row-btn {
     background-color: #fff;
     color: #888;
@@ -294,6 +323,11 @@ button.xlfrow-cog {
     &:hover {
       background-color: #999;
     }
+.sortable-active {
+  background-color: #fafafa;
+  border: 1px solid #bbb;
+  .expanding-spacer-between-rows {
+    display: none;
   }
 }
 
@@ -407,11 +441,6 @@ div.trailing-buttons {
     color: #666;
   }
 
-  .type-icon {
-    height: 40px;
-    width: 40px;
-    background-color: #bbb;
-  }
 
   /* Using ".post-row-buttons"
      so that we can have an easy way to add questions

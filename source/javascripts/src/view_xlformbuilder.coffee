@@ -104,7 +104,8 @@ class XlfRowView extends Backbone.View
    "click .edit-list": "editListForRow"
    "click": "select"
    "click .add-row-btn": "expandRowSelector"
-   "click .xlfrow-cog": "expandCog"
+   "click .row-extras-summary": "expandCog"
+   "click .glyphicon-cog": "expandCog"
   initialize: ()->
     typeDetail = @model.get("type")
     @$el.attr("data-row-id", @model.cid)
@@ -123,7 +124,7 @@ class XlfRowView extends Backbone.View
   render: ->
     @$el.html """
       <div class="row-fluid clearfix">
-        <div class="col-xs-2 col-sm-1 row-type">
+        <div class="row-type-col row-type">
         </div>
         <div class="col-xs-9 col-sm-10 row-content"></div>
         <div class="col-xs-1 col-sm-1 row-r-buttons">
@@ -131,12 +132,16 @@ class XlfRowView extends Backbone.View
         </div>
       </div>
       <div class="row-fluid clearfix">
-        <div class="col-xs-1">
-          <button type="button" class="xlfrow-cog" aria-hidden="true">
+        <div class="row-type-col">&nbsp;</div>
+        <p class="col-xs-11 row-extras-summary">
+          <span class="glyphicon glyphicon-cog"></span> &nbsp;
+          <span class="summary-details"></span>
+        </p>
+        <div class="col-xs-11 row-extras hidden row-fluid">
+          <p class="pull-left">
             <span class="glyphicon glyphicon-cog"></span>
-          </button>
+          </p>
         </div>
-        <div class="col-xs-9 col-sm-10 row-extras hidden row-fluid"></div>
       </div>
       <div class="row clearfix expanding-spacer-between-rows">
         <div class="add-row-btn btn btn-xs btn-default">+</div>
@@ -145,7 +150,7 @@ class XlfRowView extends Backbone.View
     """
     @rowContent = @$(".row-content")
     @rowExtras = @$(".row-extras")
-    @cogButton = @$(".xlfrow-cog")
+    @rowExtrasSummary = @$(".row-extras-summary")
     for [key, val] in @model.attributesArray()
       new XlfDetailView(model: val, rowView: @).renderInRowView(@)
 
@@ -184,8 +189,10 @@ class XlfRowView extends Backbone.View
     lv = new XLF.EditListView(choiceList: new XLF.ChoiceList(), survey: @model._parent, rowView: @)
     $lvel = lv.render().$el.css @$(".select-list").position()
     @$el.append $lvel
-  expandCog: ()->
-    @cogButton.toggleClass("active")
+  expandCog: (evt)->
+    evt.stopPropagation()
+    @rowExtras.parent().toggleClass("activated")
+    @rowExtrasSummary.toggleClass("hidden")
     @rowExtras.toggleClass("hidden")
 
 class @SurveyApp extends Backbone.View
@@ -232,7 +239,7 @@ class @SurveyApp extends Backbone.View
       <p class="display-description">
         #{@survey.get("displayDescription")}
       </p>
-      <div class="stats row-details" id="additional-options">&nbsp;</div>
+      <div class="stats row-details clearfix" id="additional-options"></div>
       <div class="form-editor-wrap">
         <ul class="-form-editor">
           <li class="editor-message empty">
@@ -276,6 +283,19 @@ class @SurveyApp extends Backbone.View
       addOpts.append((new XlfSurveyDetailView(model: detail)).render().el)
 
     @softReset()
+
+    @formEditorEl.sortable({
+        axis: "y"
+        cancel: "button,div.add-row-btn,.well"
+        cursor: "move"
+        distance: 5
+        items: "> li"
+        placeholder: "placeholder"
+        opacity: 0.9
+        scroll: false
+        activate: (evt, ui)-> ui.item.addClass("sortable-active")
+        deactivate: (evt,ui)-> ui.item.removeClass("sortable-active")
+      })
     @
   softReset: ->
     fe = @formEditorEl
@@ -309,6 +329,7 @@ class @SurveyApp extends Backbone.View
         $el.slideDown 175
       else
         fe.append($el)
+
   clickRemoveRow: (evt)->
     evt.preventDefault()
     if confirm("Are you sure you want to delete this question? This action cannot be undone.")
@@ -343,7 +364,7 @@ This is the view for the survey-wide details that appear at the bottom
 of the survey. Examples: "imei", "start", "end"
 ###
 class XlfSurveyDetailView extends Backbone.View
-  className: "survey-detail row-detail"
+  className: "survey-detail"
   events:
     "change input": "changeChkValue"
   initialize: ({@model})->
