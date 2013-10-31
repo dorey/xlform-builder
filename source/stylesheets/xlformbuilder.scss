@@ -40,6 +40,9 @@ blockquote {
   font-weight: 600;
   color: #666;
 }
+.option-placeholder {
+  background-image: url('../images/construction_paper.png');
+}
 .placeholder {
   height: 110px;
   background-image: url('../images/construction_paper.png');
@@ -362,6 +365,18 @@ button.xlfrow-cog {
     &.menu-item-image {
       background-image: url('../images/type-icons/image.png');
     }
+    &.menu-item-select_multiple {
+      background-image: url('../images/type-icons/select.png');
+      &:after {
+        content: "select multiple";
+      }
+    }
+    &.menu-item-select_one {
+      background-image: url('../images/type-icons/select.png');
+      &:after {
+        content: "select multiple";
+      }
+    }
   }
 }
 .sortable-active {
@@ -548,5 +563,19 @@ div.trailing-buttons {
     p {
       margin: 0;
     }
+  }
+}
+
+.list-view {
+  ul {
+    li {
+      p {
+        margin: 0;
+      }
+    }
+  }
+  button {
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
 }

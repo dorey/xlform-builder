@@ -94,6 +94,73 @@ class XlfRowSelector extends Backbone.View
     survey.addRowAtIndex({type: mi}, rowBeforeIndex+1)
     @hide()
 
+class XlfOptionView extends Backbone.View
+  tagName: "li"
+  className: "xlf-option-view"
+  render: ->
+    @p = $("<p>")
+    if @model
+      @p.html @model.get("label")
+      @$el.attr("data-option-id", @model.cid)
+    else
+      @model = new XLF.Option()
+      @options.cl.options.add(@model)
+      @p.html("Option #{1+@options.i}").addClass("preliminary")
+    @p.editInPlace callback: _.bind @saveValue, @
+    @$el.html(@p)
+    @
+  saveValue: (ick, nval, oval, ctxt)->
+    @model.set("label", nval, silent: true)
+    @model.set("name", XLF.sluggify(nval), silent: true)
+    nval
+class XlfListView extends Backbone.View
+  initialize: ({@rowView, @model})->
+    @list = @model
+    @row = @rowView.model
+    @ulClasses = @$("ul").prop("className")
+  render: ->
+    @$el.html (@ul = $("<ul>", class: @ulClasses))
+    if @row.get("type").get("rowType").specifyChoice
+      for option, i in @model.options.models
+        new XlfOptionView(model: option, cl: @model).render().$el.appendTo @ul
+      while i < 2
+        new XlfOptionView(empty: true, cl: @model, i: i).render().$el.appendTo @ul
+        i++
+      @$el.removeClass("hidden")
+    else
+      @$el.addClass("hidden")
+    @ul.sortable({
+        axis: "y"
+        cursor: "move"
+        distance: 5
+        items: "> li"
+        placeholder: "option-placeholder"
+        opacity: 0.9
+        scroll: false
+        deactivate: =>
+          if @hasReordered
+            @reordered()
+          true
+        change: => @hasReordered = true
+      })
+    btn = $ """<button class="btn btn-xs btn-default col-md-3 col-md-offset-1">Add option</button>"""
+    btn.click ()=>
+      i = @ul.find("li").length
+      new XlfOptionView(empty: true, cl: @model, i: i).render().$el.appendTo @ul
+    @$el.append(btn)
+    @
+  reordered: (evt, ui)->
+    ids = []
+    @ul.find("> li").each (i,li)=>
+      lid = $(li).data("optionId")
+      if lid
+        ids.push lid
+    for id, n in ids
+      @model.options.get(id).set("order", n, silent: true)
+    @model.options.comparator = "order"
+    @model.options.sort()
+    @hasReordered = false
+
 class XlfRowView extends Backbone.View
   tagName: "li"
   className: "xlf-row-view"
@@ -121,13 +188,16 @@ class XlfRowView extends Backbone.View
     new XlfRowSelector(el: @$el.find(".expanding-spacer-between-rows").get(0), action: "click-add-row", spawnedFromView: @)
   render: ->
     @$el.html """
-      <div class="row-fluid clearfix">
+      <div class="row clearfix">
         <div class="row-type-col row-type">
         </div>
         <div class="col-xs-9 col-sm-10 row-content"></div>
         <div class="col-xs-1 col-sm-1 row-r-buttons">
           <button type="button" class="close delete-row" aria-hidden="true">&times;</button>
         </div>
+      </div>
+      <div class="row list-view hidden">
+        <ul class="col-md-offset-1 col-md-8"></ul>
       </div>
       <div class="row-fluid clearfix">
         <div class="row-type-col">&nbsp;</div>
@@ -146,6 +216,10 @@ class XlfRowView extends Backbone.View
         <div class="line">&nbsp;</div>
       </div>
     """
+    unless (cl = @model.getList())
+      cl = new XLF.ChoiceList()
+      @model.setList(cl)
+    @listView = new XlfListView(el: @$(".list-view"), model: cl, rowView: @).render()
     @rowContent = @$(".row-content")
     @rowExtras = @$(".row-extras")
     @rowExtrasSummary = @$(".row-extras-summary")
@@ -299,7 +373,7 @@ class @SurveyApp extends Backbone.View
 
     @formEditorEl.sortable({
         axis: "y"
-        cancel: "button,div.add-row-btn,.well"
+        cancel: "button,div.add-row-btn,.well,ul.list-view"
         cursor: "move"
         distance: 5
         items: "> li"
