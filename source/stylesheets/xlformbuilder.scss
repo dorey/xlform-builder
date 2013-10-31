@@ -285,7 +285,7 @@ button.xlfrow-cog {
     line-height: 13px;
     top: 6px;
 
-    &:hover {
+    &:hover, &.hovered {
       color: #888;
       background-color: #fff;
       height: 18px;
@@ -455,7 +455,7 @@ button.xlfrow-cog {
 div.trailing-buttons {
   text-align: right;
   padding: 0 28px;
-  margin: -4px 0 4px;
+  margin: 0;
   button {
     &.attached {
       // border-radius: 0 0 6px 6px;
@@ -518,7 +518,7 @@ div.trailing-buttons {
   // border: 1px solid #bbb;
   // border-radius: 4px;
   margin: 10px auto;
-  padding: 12px 14px;
+  // padding: 12px 14px;
   // background-color: #d4d4d4;
 
   #survey-stats {
@@ -537,9 +537,9 @@ div.trailing-buttons {
     // border: 1px solid #666;
     // border-color: #aaa #999 #999 #aaa;
     // border-radius: 4px;
-    font-size: 11px;
-    margin: 0 0 6px;
-    padding: 3px 6px;
+    // font-size: 11px;
+    // margin: 0 0 6px;
+    // padding: 3px 6px;
   }
   .edit-list-view {
     // background-color: rgba(200,200,200,0.8);

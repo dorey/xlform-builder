@@ -197,7 +197,10 @@ class @SurveyApp extends Backbone.View
   className: "formbuilder-wrap container"
   events:
     "click .delete-row": "clickRemoveRow"
-    "click #publish-survey": "publishButtonClick"
+    "click #preview": "previewButtonClick"
+    "click #download": "downloadButtonClick"
+    "click #save": "saveButtonClick"
+    "click #publish": "publishButtonClick"
 
   initialize: (options)->
     if options.survey and (options.survey instanceof XLF.Survey)
@@ -222,22 +225,34 @@ class @SurveyApp extends Backbone.View
     # @survey.on "change", @softReset, @
 
     @onPublish = options.publish || $.noop
+    @onSave = options.save || $.noop
+    @onPreview = options.preview || $.noop
+
     $(window).on "keydown", (evt)=>
       @onEscapeKeydown(evt)  if evt.keyCode is 27
 
   render: ()->
 
     @$el.html """
-      <h1 class="title">
-        <span class="display-title">
-          #{@survey.get("displayTitle")}
-        </span>
-        <span class="hashtag">[<span class="form-name">#{@survey.settings.get("form_title")}</span>]</span>
-      </h1>
-      <p class="display-description">
-        #{@survey.get("displayDescription")}
-      </p>
-      <div class="stats row-details clearfix" id="additional-options"></div>
+      <div class="row clearfix">
+        <div class="col-md-9">
+          <h1 class="title">
+            <span class="display-title">
+              #{@survey.get("displayTitle")}
+            </span>
+            <span class="hashtag">[<span class="form-name">#{@survey.settings.get("form_title")}</span>]</span>
+          </h1>
+          <p class="display-description">
+            #{@survey.get("displayDescription")}
+          </p>
+        </div>
+        <div class="col-md-3">
+          <a class="btn btn-default" href="#" id="download">Download</a>
+          <button class="btn btn-default" id="preview">Preview</button>
+          <button class="btn btn-primary" id="save">Save</button>
+        </div>
+        <div class="stats row-details clearfix col-md-11" id="additional-options"></div>
+      </div>
       <div class="form-editor-wrap">
         <ul class="-form-editor">
           <li class="editor-message empty">
@@ -246,9 +261,9 @@ class @SurveyApp extends Backbone.View
             <span class="underline">+ Add question</span> below.
           </li>
         </ul>
-        <div class="trailing-buttons">
-          <button id="publish-survey">Preview</button>
-        </div>
+        <!-- <div class="trailing-buttons row-fluid">
+          <div class="row-type-col">&nbsp;</div>
+        </div> -->
       </div>
     """
     @formEditorEl = @$(".-form-editor")
@@ -354,7 +369,18 @@ class @SurveyApp extends Backbone.View
           @formEditorEl.prepend($el)
 
   onEscapeKeydown: -> #noop. to be overridden
+  previewButtonClick: (evt)->
+    @onPreview.call(@, arguments)
+  downloadButtonClick: (evt)->
+    # Download = save a CSV file to the disk
+    surveyCsv = @survey.toCSV()
+    if surveyCsv
+      evt.target.href = "data:text/csv;charset=utf-8,#{encodeURIComponent(@survey.toCSV())}"
+  saveButtonClick: (evt)->
+    # Save = store CSV in local storage.
+    @onSave.call(@, arguments)
   publishButtonClick: (evt)->
+    # Publish = trigger publish action (ie. post to formhub)
     @onPublish.call(@, arguments)
 
 ###
