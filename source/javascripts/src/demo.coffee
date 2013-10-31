@@ -44,18 +44,18 @@ sampleForms = {}
     else
       $settings = {}
 
-    $("#preview").empty()
-    publishCb = ()->
+    $("#preview-wrap").empty()
+    previewCb = ()->
       # called by surveyapp
       window.surveyCsv = @survey.toCSV()
       log "Storing survey csv in 'window.surveyCsv'."
-      csv2dom window.surveyCsv, "#preview"
+      csv2dom window.surveyCsv, "#preview-wrap"
 
     app = new SurveyApp
       choices: $choices
       survey: $survey
       settings: $settings
-      publish: publishCb
+      preview: previewCb
 
     $("#builder").html app.render().$el
     ``
