@@ -261,11 +261,12 @@ class XLF.Row extends BaseModel
         typeStr += " or_other"
       typeDetail.set({value: typeStr}, silent: true)
     typeDetail.on "change:list", (rd, cl, ctx)->
-      clname = cl.get("name")
-      unless clname
-        clname = txtid()
-        cl.set("name", clname, silent: true)
-      @set("value", "#{@get('typeId')} #{clname}")
+      if typeDetail.get("rowType").specifyChoice
+        clname = cl.get("name")
+        unless clname
+          clname = txtid()
+          cl.set("name", clname, silent: true)
+        @set("value", "#{@get('typeId')} #{clname}")
 
   getValue: (what)->
     @get(what).get("value")
