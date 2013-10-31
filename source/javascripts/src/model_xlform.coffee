@@ -102,8 +102,25 @@ class XLF.Survey extends SurveyFragment
       columns: oCols
       rowObjects: oRows
 
+    choicesCsvJson = do =>
+      lists = []
+      @forEachRow (r)->
+        if (list = r.getList())
+          lists.push(list)
+
+      rows = []
+      cols = ["list name", "name", "label"]
+      for choiceList in lists
+        choiceList.set("name", txtid(), silent: true)  unless choiceList.get("name")
+        clName = choiceList.get("name")
+        for option in choiceList.options.models
+          rows.push _.extend {}, option.toJSON(), "list name": choiceList.get("name")
+
+      columns: cols
+      rowObjects: rows
+
     survey: surveyCsvJson
-    choices: @choices.toCsvJson()
+    choices: choicesCsvJson
     settings: @settings.toCsvJson()
 
   toCSV: ->
@@ -243,6 +260,12 @@ class XLF.Row extends BaseModel
       if rtp.orOtherOption and typeDetail.get("orOther")
         typeStr += " or_other"
       typeDetail.set({value: typeStr}, silent: true)
+    typeDetail.on "change:list", (rd, cl, ctx)->
+      clname = cl.get("name")
+      unless clname
+        clname = txtid()
+        cl.set("name", clname, silent: true)
+      @set("value", "#{@get('typeId')} #{clname}")
 
   getValue: (what)->
     @get(what).get("value")
@@ -252,6 +275,9 @@ class XLF.Row extends BaseModel
 
   setList: (list)->
     listToSet = @_parent.choices.get(list)
+    unless listToSet
+      @_parent.choices.add(list)
+      listToSet = @_parent.choices.get(list)
     throw new Error("List not found: #{list}")  unless listToSet
     @get("type").set("list", listToSet)
 
@@ -344,16 +370,6 @@ class XLF.ChoiceLists extends Backbone.Collection
     for model in @models
       out[model.get("name")] = model.summaryObj()
     out
-  toCsvJson: ->
-    @summaryObj()
-    rows = []
-    cols = ["list name", "name", "label"]
-    for choiceList in @models
-      for option in choiceList.options.models
-        rows.push _.extend {}, option.toJSON(), "list name": choiceList.get("name")
-
-    columns: cols
-    rowObjects: rows
 
 ###
 XLF...
