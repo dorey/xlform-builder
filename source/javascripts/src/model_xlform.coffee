@@ -528,14 +528,16 @@ XLF.defaultsForType =
       value: "Use the camera to record a video"
   audio:
     label:
-      value: "Use the camera to record a sound"
+      value: "Use the camera's microphone to record a sound"
   note:
     label:
       value: "This note can be read out loud"
   integer:
     label:
       value: "Enter a number"
-      _promptToChangeDefault: true
+  barcode:
+    hint:
+      value: "Use the camera to scan a barcode"
   decimal:
     label:
       value: "Enter a number"
