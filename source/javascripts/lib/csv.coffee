@@ -132,7 +132,9 @@ csv = (param, opts)->
   if param instanceof Csv then param else new Csv param, opts
 
 asCsvCellValue = (cell)->
-  if ///\W|#{csv.settings.delimiter}///.test cell
+  if cell is undefined
+    ""
+  else if ///\W|\w|#{csv.settings.delimiter}///.test cell
     JSON.stringify("#{cell}")
   else
     cell
@@ -283,7 +285,7 @@ class SheetedCsv
       sheet = @_sheets[sheetId]
       cols = sheet.columns
       rowA = sheet.rowArray
-      headRowStr = sheetId
+      headRowStr = asCsvCellValue sheetId
       headRowStr += delimiter  for i in [0...cols.length]
       outp.push headRowStr
       outp.push delimiter + (asCsvCellValue col for col in cols).join delimiter
