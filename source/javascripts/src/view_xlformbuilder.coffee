@@ -323,7 +323,7 @@ class @SurveyApp extends Backbone.View
         <div class="col-md-3">
           <a class="btn btn-default" href="#" id="download">Download</a>
           <button class="btn btn-default" id="preview">Preview</button>
-          <button class="btn btn-primary" id="save">Save</button>
+          <!-- <button class="btn btn-primary" id="save">Save</button> -->
         </div>
         <div class="stats row-details clearfix col-md-11" id="additional-options"></div>
       </div>
