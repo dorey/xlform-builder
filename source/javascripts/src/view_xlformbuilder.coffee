@@ -97,6 +97,8 @@ class XlfRowSelector extends Backbone.View
 class XlfOptionView extends Backbone.View
   tagName: "li"
   className: "xlf-option-view"
+  events:
+    "keyup input": "keyupinput"
   render: ->
     @p = $("<p>")
     if @model
@@ -109,10 +111,24 @@ class XlfOptionView extends Backbone.View
     @p.editInPlace callback: _.bind @saveValue, @
     @$el.html(@p)
     @
+  keyupinput: (evt)->
+    ifield = @$("input.inplace_field")
+    if evt.keyCode is 8 and ifield.hasClass("empty")
+      ifield.blur()
+
+    if ifield.val() is ""
+      ifield.addClass("empty")
+    else
+      ifield.removeClass("empty")
   saveValue: (ick, nval, oval, ctxt)->
-    @model.set("label", nval, silent: true)
-    @model.set("name", XLF.sluggify(nval), silent: true)
+    if nval is ""
+      @$el.remove()
+      @model.destroy()
+    else
+      @model.set("label", nval, silent: true)
+      @model.set("name", XLF.sluggify(nval), silent: true)
     nval
+
 class XlfListView extends Backbone.View
   initialize: ({@rowView, @model})->
     @list = @model

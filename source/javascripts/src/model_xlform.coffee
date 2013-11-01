@@ -347,6 +347,8 @@ XLF...
 class XLF.Option extends BaseModel
   idAttribute: "name"
   initialize: -> @unset("list name")
+  destroy: ->
+    log "destroy me", @
   list: -> @collection
 
 class XLF.Options extends Backbone.Collection
