@@ -3,8 +3,7 @@ title: XLFormBuilder
 ---
 
 <div id="main">
-  <div id="samples">
-    Sample forms:
+  <div id="samples" style="display:none">
 
     <script type="text/xlform" id="simplest">
 
@@ -69,13 +68,5 @@ title: XLFormBuilder
 
 <% content_for :js do %>
   <script type="text/javascript" charset="utf-8">
-
-  // the demo is defined in demo.coffee
-  // and basically lets you click on a form
-  // to open it up in the builder.
-  $("script[type='text/xlform']").each(convertToDemoForm);
-
-  $(loadSampleFormFromHashIfPresent);
-
   </script>
 <% end %>

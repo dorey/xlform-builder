@@ -7,64 +7,64 @@ trimString = (str) -> String(str).replace /^\s+|\s+$/g, ''
 trimMultilineString = (str)->
   (trimString(s) for s in str.split("\n") when s.match(/\w/)).join("\n")
 
-sampleForms = {}
+# sampleForms = {}
 
-@convertToDemoForm = ()->
-  $s = $(@)
-  csvTxt = trimMultilineString $s.html()
-  cobj = csv.sheeted(csvTxt)
-  settingsSheet = cobj.sheet "settings"
-  uniqueId = $s.attr("id") || _.uniqueId("sampleform")
-  try
-    _settings = settingsSheet.toObjects()[0]
-    formName = _settings.form_title || _settings.form_id
-    identifier = _settings.form_id || uniqueId
-  catch e
-    formName = "untitled form"
-    identifier = uniqueId
+# @convertToDemoForm = ()->
+#   $s = $(@)
+#   csvTxt = trimMultilineString $s.html()
+#   cobj = csv.sheeted(csvTxt)
+#   settingsSheet = cobj.sheet "settings"
+#   uniqueId = $s.attr("id") || _.uniqueId("sampleform")
+#   try
+#     _settings = settingsSheet.toObjects()[0]
+#     formName = _settings.form_title || _settings.form_id
+#     identifier = _settings.form_id || uniqueId
+#   catch e
+#     formName = "untitled form"
+#     identifier = uniqueId
 
-  button = $ """
-  <button data-clicks="launch-builder" type="button" class="btn btn-sm btn-default">
-    #{formName}
-  </button>
-  """
-  sampleForms[identifier] = button
-  button.click (evt)->
-    evt.preventDefault()
-    $et = $(evt.target)
-    $et.siblings(".btn-primary").removeClass("btn-primary")
-    $et.addClass("btn-primary")
-    window.location.hash = identifier
-    sheetToObjects = (sheetName)->
-      if (sht = cobj.sheet sheetName) then sht.toObjects() else []
-    $survey = if (sht = cobj.sheet "survey") then sht.toObjects() else []
-    $choices = if (sht = cobj.sheet "choices") then sht.toObjects() else []
-    if settingsSheet
-      $settings = settingsSheet.toObjects()[0]
-    else
-      $settings = {}
+#   button = $ """
+#   <button data-clicks="launch-builder" type="button" class="btn btn-sm btn-default">
+#     #{formName}
+#   </button>
+#   """
+#   sampleForms[identifier] = button
+#   button.click (evt)->
+#     evt.preventDefault()
+#     $et = $(evt.target)
+#     $et.siblings(".btn-primary").removeClass("btn-primary")
+#     $et.addClass("btn-primary")
+#     window.location.hash = identifier
+#     sheetToObjects = (sheetName)->
+#       if (sht = cobj.sheet sheetName) then sht.toObjects() else []
+#     $survey = if (sht = cobj.sheet "survey") then sht.toObjects() else []
+#     $choices = if (sht = cobj.sheet "choices") then sht.toObjects() else []
+#     if settingsSheet
+#       $settings = settingsSheet.toObjects()[0]
+#     else
+#       $settings = {}
 
-    $("#preview-wrap").empty()
-    previewCb = ()->
-      # called by surveyapp
-      window.surveyCsv = @survey.toCSV()
-      log "Storing survey csv in 'window.surveyCsv'."
-      csv2dom window.surveyCsv, "#preview-wrap"
+#     $("#preview-wrap").empty()
+#     previewCb = ()->
+#       # called by surveyapp
+#       window.surveyCsv = @survey.toCSV()
+#       log "Storing survey csv in 'window.surveyCsv'."
+#       csv2dom window.surveyCsv, "#preview-wrap"
 
-    app = new SurveyApp
-      choices: $choices
-      survey: $survey
-      settings: $settings
-      preview: previewCb
+#     app = new SurveyApp
+#       choices: $choices
+#       survey: $survey
+#       settings: $settings
+#       preview: previewCb
 
-    $("#builder").html app.render().$el
-    ``
-  $s.replaceWith(button)
+#     $("#builder").html app.render().$el
+#     ``
+#   $s.replaceWith(button)
 
-@loadSampleFormFromHashIfPresent = ->
-  if hsh = window.location.hash
-    frmUid = hsh.replace(/^\#/, '')
-    sampleForms[frmUid].click()
+# @loadSampleFormFromHashIfPresent = ->
+#   if hsh = window.location.hash
+#     frmUid = hsh.replace(/^\#/, '')
+#     sampleForms[frmUid].click()
 
 csv2dom = (txt, _elem)->
   elem = if _elem then $(_elem).empty() else $("<div>")
