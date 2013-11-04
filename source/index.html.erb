@@ -1,69 +1,104 @@
 ---
 title: XLFormBuilder
 ---
-
-<div id="main">
-  <div id="samples" style="display:none">
-
-    <script type="text/xlform" id="simplest">
-
-    "survey",
-    ,"type","name","label","hint"
-    ,"text","name","What's your favorite word?","If you can't think of one, feel free to make one up"
-
-    </script>
-
-    <script type="text/xlform" id="favorite-color">
-
-    "survey",
-    ,"type","name","label","hint"
-    ,"text","q1","What is your name?","type your name"
-    ,"select_one colors","favcolor","What is your favorite color?"
-
-    "choices",
-    ,"list name","name","label"
-    ,"colors","red","Red"
-    ,"colors","green","Green"
-    ,"colors","blue","Blue"
-    "settings",
-    ,"form_title","description"
-    ,"favecolor","What's your favorite color?\nThis survey is great for asking people what their favorite color is."
-
-    </script>
-
-    <script type="text/xlform" id="census-xlform">
-
-    "survey",
-    ,"type","name","label"
-    ,"integer","q1","How many people were living or staying in this house, apartment, or mobile home on April 1, 2010?"
-    ,"select_one yes_no","q2","Were there any additional people staying here April 1, 2010 that you did not include in Question 1?"
-    ,"select_one ownership_type or_other","q3","Is this house, apartment, or mobile home: owned with mortgage, owned without mortgage, rented, occupied without rent?"
-    ,"text","q4","What is your telephone number?"
-    ,"text","q5","Please provide information for each person living here. Start with a person here who owns or rents this house, apartment, or mobile home. If the owner or renter lives somewhere else, start with any adult living here. This will be Person 1. What is Person 1's name?"
-    ,"select_one male_female","q6","What is Person 1's sex?"
-    ,"date","q7","What is Person 1's age and Date of Birth?"
-    ,"text","q8","Is Person 1 of Hispanic, Latino or Spanish origin?"
-    ,"text","q9","What is Person 1's race?"
-    ,"select_one yes_no","q10","Does Person 1 sometimes live or stay somewhere else?"
-
-    "choices",
-    ,"list name","name","label"
-    ,"yes_no","yes","Yes"
-    ,"yes_no","no","No"
-    ,"male_female","male","Male"
-    ,"male_female","female","Female"
-    ,"ownership_type","owned_with_mortgage","owned with mortgage",
-    ,"ownership_type","owned_without_mortgage","owned without mortgage"
-    ,"ownership_type","rented","rented"
-    ,"ownership_type","occupied_without_rent","occupied without rent"
-    "settings"
-    ,"form_title","form_id","description"
-    ,"Census Questions (2010)","census2010","These are the US census questions from 2010."
-
-    </script>
+<header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
+  <div class="container">
+    <div class="navbar-header">
+      <a href="../" class="navbar-brand">XLForm Builder</a>
+    </div>
+    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+      <ul class="nav navbar-nav">
+        <li class="active">
+          <a href="index.html#">My Surveys</a>
+        </li>
+        <li>
+          <a href="index.html#">Sample Surveys</a>
+        </li>
+        <li>
+          <a href="tests.html">Tests</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="http://github.com/dorey/xlform-builder">Source</a>
+        </li>
+      </ul>
+    </nav>
   </div>
-  <div id="builder"></div>
-  <div id="preview-wrap"></div>
+</header>
+
+<div id="main" class="container">
+  <div class="row">
+    <div class="col-md-2">
+      <h3>
+        <button class="btn btn-default btn-block" id="new-survey">New Survey</button>
+      </h3>
+    </div>
+    <div class="col-md-10">
+
+      <div id="samples">
+
+        <script type="text/xlform" id="simplest">
+
+        "survey",
+        ,"type","name","label","hint"
+        ,"text","name","What's your favorite word?","If you can't think of one, feel free to make one up"
+
+        </script>
+
+        <script type="text/xlform" id="favorite-color">
+
+        "survey",
+        ,"type","name","label","hint"
+        ,"text","q1","What is your name?","type your name"
+        ,"select_one colors","favcolor","What is your favorite color?"
+
+        "choices",
+        ,"list name","name","label"
+        ,"colors","red","Red"
+        ,"colors","green","Green"
+        ,"colors","blue","Blue"
+        "settings",
+        ,"form_title","description"
+        ,"favecolor","What's your favorite color?\nThis survey is great for asking people what their favorite color is."
+
+        </script>
+
+        <script type="text/xlform" id="census-xlform">
+
+        "survey",
+        ,"type","name","label"
+        ,"integer","q1","How many people were living or staying in this house, apartment, or mobile home on April 1, 2010?"
+        ,"select_one yes_no","q2","Were there any additional people staying here April 1, 2010 that you did not include in Question 1?"
+        ,"select_one ownership_type or_other","q3","Is this house, apartment, or mobile home: owned with mortgage, owned without mortgage, rented, occupied without rent?"
+        ,"text","q4","What is your telephone number?"
+        ,"text","q5","Please provide information for each person living here. Start with a person here who owns or rents this house, apartment, or mobile home. If the owner or renter lives somewhere else, start with any adult living here. This will be Person 1. What is Person 1's name?"
+        ,"select_one male_female","q6","What is Person 1's sex?"
+        ,"date","q7","What is Person 1's age and Date of Birth?"
+        ,"text","q8","Is Person 1 of Hispanic, Latino or Spanish origin?"
+        ,"text","q9","What is Person 1's race?"
+        ,"select_one yes_no","q10","Does Person 1 sometimes live or stay somewhere else?"
+
+        "choices",
+        ,"list name","name","label"
+        ,"yes_no","yes","Yes"
+        ,"yes_no","no","No"
+        ,"male_female","male","Male"
+        ,"male_female","female","Female"
+        ,"ownership_type","owned_with_mortgage","owned with mortgage",
+        ,"ownership_type","owned_without_mortgage","owned without mortgage"
+        ,"ownership_type","rented","rented"
+        ,"ownership_type","occupied_without_rent","occupied without rent"
+        "settings"
+        ,"form_title","form_id","description"
+        ,"Census Questions (2010)","census2010","These are the US census questions from 2010."
+
+        </script>
+      </div>
+      <div id="builder"></div>
+      <div id="preview-wrap"></div>
+    </div>
+  </div>
 </div>
 
 <% content_for :js do %>
