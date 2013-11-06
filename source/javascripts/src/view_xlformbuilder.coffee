@@ -347,8 +347,10 @@ class @SurveyApp extends Backbone.View
       <div class="form-editor-wrap">
         <ul class="-form-editor">
           <li class="editor-message empty">
-            <strong>This survey is currently empty.</strong><br>
-            You can add questions, notes, prompts, or other fields by clicking on the "+" sign below.<br>
+            <p class="empty-survey-text">
+              <strong>This survey is currently empty.</strong><br>
+              You can add questions, notes, prompts, or other fields by clicking on the "+" sign below.
+            </p>
             <div class="row clearfix expanding-spacer-between-rows">
               <div class="add-row-btn btn btn-xs btn-default">+</div>
               <div class="line">&nbsp;</div>
@@ -362,6 +364,7 @@ class @SurveyApp extends Backbone.View
     """
     @formEditorEl = @$(".-form-editor")
     @$(".editor-message .expanding-spacer-between-rows .add-row-btn").click (evt)=>
+      @$(".empty-survey-text").slideUp()
       new XlfRowSelector(el: @$el.find(".expanding-spacer-between-rows").get(0), action: "click-add-row", survey: @survey)
 
     # .form-name maps to settings.form_title
