@@ -1,0 +1,20 @@
+/* line 1, /home/dorey/tmp/xlfb/source/stylesheets/demo.scss */
+body {
+  padding-top: 50px; }
+
+/* line 5, /home/dorey/tmp/xlfb/source/stylesheets/demo.scss */
+#preview h2 {
+  font-size: 15px;
+  margin: 9px 0 0;
+  font-weight: normal; }
+  /* line 9, /home/dorey/tmp/xlfb/source/stylesheets/demo.scss */
+  #preview h2 code {
+    font-size: 15px; }
+/* line 14, /home/dorey/tmp/xlfb/source/stylesheets/demo.scss */
+#preview table td {
+  min-width: 100px; }
+/* line 17, /home/dorey/tmp/xlfb/source/stylesheets/demo.scss */
+#preview table td, #preview table th {
+  text-align: left;
+  border: 1px solid #ddd;
+  padding: 2px 15px; }
