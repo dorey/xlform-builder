@@ -73,7 +73,7 @@ class XlfRowSelector extends Backbone.View
       # ["unk", "ellipse"],
       ["select_one", "select_multiple"]]
     for mrow in mItems
-      menurow = $("<div>", class: "menu-row col-md-1").appendTo $menu
+      menurow = $("<div>", class: "menu-row").appendTo $menu
       for mcell, i in mrow
         menurow.append """<div class="menu-item menu-item-#{mcell}" data-menu-item="#{mcell}">#{mcell}</div>"""
 
@@ -88,8 +88,8 @@ class XlfRowSelector extends Backbone.View
     @line.empty().removeClass("expanded").css "height": 0
   selectMenuItem: (evt)->
     mi = $(evt.target).data("menuItem")
-    rowBefore = @options.spawnedFromView.model
-    survey = rowBefore._parent
+    rowBefore = @options.spawnedFromView?.model
+    survey = @options.survey || rowBefore._parent
     rowBeforeIndex = survey.rows.indexOf(rowBefore)
     survey.addRowAtIndex({type: mi}, rowBeforeIndex+1)
     @hide()
@@ -325,7 +325,7 @@ class @SurveyApp extends Backbone.View
 
     @$el.html """
       <div class="row clearfix">
-        <div class="col-md-9">
+        <div class="col-md-8">
           <h1 class="title">
             <span class="display-title">
               #{@survey.get("displayTitle")}
@@ -336,9 +336,10 @@ class @SurveyApp extends Backbone.View
             #{@survey.get("displayDescription")}
           </p>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <a class="btn btn-default" href="#" id="download">Download</a>
           <button class="btn btn-default disabled" id="preview">Preview</button>
+          <button class="btn btn-default disabled" id="publish">Publish</button>
           <!-- <button class="btn btn-primary" id="save">Save</button> -->
         </div>
         <div class="stats row-details clearfix col-md-11" id="additional-options"></div>
@@ -347,8 +348,11 @@ class @SurveyApp extends Backbone.View
         <ul class="-form-editor">
           <li class="editor-message empty">
             <strong>This survey is currently empty.</strong><br>
-            You can add questions, notes, prompts, or other fields by clicking
-            <span class="underline">+ Add question</span> below.
+            You can add questions, notes, prompts, or other fields by clicking on the "+" sign below.<br>
+            <div class="row clearfix expanding-spacer-between-rows">
+              <div class="add-row-btn btn btn-xs btn-default">+</div>
+              <div class="line">&nbsp;</div>
+            </div>
           </li>
         </ul>
         <!-- <div class="trailing-buttons row-fluid">
@@ -357,7 +361,8 @@ class @SurveyApp extends Backbone.View
       </div>
     """
     @formEditorEl = @$(".-form-editor")
-
+    @$(".editor-message .expanding-spacer-between-rows .add-row-btn").click (evt)=>
+      new XlfRowSelector(el: @$el.find(".expanding-spacer-between-rows").get(0), action: "click-add-row", survey: @survey)
 
     # .form-name maps to settings.form_title
     @$(".form-name").editInPlace
@@ -389,7 +394,7 @@ class @SurveyApp extends Backbone.View
 
     @formEditorEl.sortable({
         axis: "y"
-        cancel: "button,div.add-row-btn,.well,ul.list-view"
+        cancel: "button,div.add-row-btn,.well,ul.list-view,li.editor-message"
         cursor: "move"
         distance: 5
         items: "> li"

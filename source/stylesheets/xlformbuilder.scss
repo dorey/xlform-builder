@@ -310,12 +310,13 @@ button.xlfrow-cog {
   }
   $mrWidth: 65px;
   .menu-row {
-    // width: $mrWidth;
-    // height: $mrWidth;
-    // float: left;
-    // margin-left: 12px;
-    // border: 1px solid red;
-    // box-sizing: border-box;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    width: 94px;
   }
   .menu-item {
     height: $mrWidth;
