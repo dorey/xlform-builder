@@ -7,6 +7,10 @@ trimString = (str) -> String(str).replace /^\s+|\s+$/g, ''
 trimMultilineString = (str)->
   (trimString(s) for s in str.split("\n") when s.match(/\w/)).join("\n")
 
+$ ->
+  $("#new-survey").click (evt)->
+    evt.preventDefault()
+    new SurveyApp({}).render().$el.appendTo("#builder")
 # sampleForms = {}
 
 # @convertToDemoForm = ()->
