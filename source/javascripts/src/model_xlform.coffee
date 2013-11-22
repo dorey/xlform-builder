@@ -1,6 +1,11 @@
 ###
-Needs id -> name
-* ChoiceList
+Refactoring to consider:
+------------------------
+SurveyFragment extends Backbone.Collection (to get rid of @rows)
+Get rid of XLF.Options
+Get rid of XLF.ChoiceLists (?)
+Get rid of XLF.SurveyDetails ( maybe ?)
+Add "popover text" (or something similar) to XLF.defaultsForType
 ###
 
 ###
@@ -9,9 +14,7 @@ representation in the browser.
 ###
 @XLF = {}
 
-###
-@log function for debugging
-###
+# @log function for debugging
 @log = (args...)-> console?.log?.apply console, args
 
 ###
