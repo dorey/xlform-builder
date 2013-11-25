@@ -338,11 +338,7 @@ class @SurveyApp extends Backbone.View
             #{@survey.get("displayDescription")}
           </p>
         </div>
-        <div class="col-md-4">
-          <a class="btn btn-default" href="#" id="download">Download</a>
-          <button class="btn btn-default disabled" id="preview">Preview</button>
-          <button class="btn btn-default disabled" id="publish">Publish</button>
-          <!-- <button class="btn btn-primary" id="save">Save</button> -->
+        <div class="col-md-4 buttons">
         </div>
         <div class="stats row-details clearfix col-md-11" id="additional-options"></div>
       </div>
