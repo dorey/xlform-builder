@@ -49,6 +49,7 @@ class XlfRowSelector extends Backbone.View
     "click .shrink": "shrink"
     "click .menu-item": "selectMenuItem"
   initialize: (opts)->
+    @options = opts
     @button = @$el.find(".btn")
     @line = @$el.find(".line")
     if opts.action is "click-add-row"
@@ -187,7 +188,8 @@ class XlfRowView extends Backbone.View
    "click .add-row-btn": "expandRowSelector"
    "click .row-extras-summary": "expandCog"
    "click .glyphicon-cog": "expandCog"
-  initialize: ()->
+  initialize: (opts)->
+    @options = opts
     typeDetail = @model.get("type")
     @$el.attr("data-row-id", @model.cid)
     # @model.on "change", @render, @
